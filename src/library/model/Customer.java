@@ -41,8 +41,16 @@ public class Customer {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getFamilyName() {
         return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     public MembershipStatus getMembershipStatus() {
