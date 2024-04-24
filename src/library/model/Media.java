@@ -1,6 +1,6 @@
 package library.model;
 
-public class Media {
+public abstract class Media {
     private int mediaID;
     private String title;
     private int releaseYear;
