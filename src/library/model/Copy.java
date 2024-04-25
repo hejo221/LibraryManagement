@@ -8,6 +8,8 @@ public class Copy {
     private boolean isBorrowed;
     private LocalDate borrowDate;
     private LocalDate returnDate;
+    private Customer borrower;
+    private Employee borrowedBy;
 
     public Copy(int copyID, Media media) {
         this.copyID = copyID;
@@ -15,6 +17,8 @@ public class Copy {
         this.isBorrowed = false;
         this.borrowDate = null;
         this.returnDate = null;
+        this.borrower = null;
+        this.borrowedBy = null;
     }
 
     public int getCopyID() {
@@ -47,5 +51,21 @@ public class Copy {
 
     public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public Customer getBorrower() {
+        return borrower;
+    }
+
+    public void setBorrower(Customer borrower) {
+        this.borrower = borrower;
+    }
+
+    public Employee getBorrowedBy() {
+        return borrowedBy;
+    }
+
+    public void setBorrowedBy(Employee borrowedBy) {
+        this.borrowedBy = borrowedBy;
     }
 }
