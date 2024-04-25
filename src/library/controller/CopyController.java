@@ -1,6 +1,8 @@
 package library.controller;
 
 import library.model.Copy;
+import library.model.Customer;
+import library.model.Employee;
 import library.model.Media;
 
 import java.util.HashMap;
@@ -27,11 +29,32 @@ public class CopyController {
         return false;
     }
 
-    public boolean updateCopyBorrowStatus(int id, boolean isBorrowed) {
+    public boolean borrowCopy(int id, Customer borrower, Employee borrowedBy) {
         if (copyDB.containsKey(id)) {
             Copy copy = copyDB.get(id);
-            copy.setBorrowed(isBorrowed);
-            return true;
+            if (!copy.isBorrowed()) {
+                copy.setBorrowed(true);
+                copy.setBorrowDate(LocalDate.now());
+                copy.setReturnDate(LocalDate.now().plusDays(28));
+                copy.setBorrower(borrower);
+                copy.setBorrowedBy(borrowedBy);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean returnCopy(int id) {
+        if (copyDB.containsKey(id)) {
+            Copy copy = copyDB.get(id);
+            if (copy.isBorrowed()) {
+                copy.setBorrowed(false);
+                copy.setBorrowDate(null);
+                copy.setReturnDate(null);
+                copy.setBorrower(null);
+                copy.setBorrowedBy(null);
+                return true;
+            }
         }
         return false;
     }
