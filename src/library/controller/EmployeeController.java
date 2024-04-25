@@ -12,8 +12,8 @@ public class EmployeeController {
         this.employeeDB = new HashMap<>();
     }
 
-    public Employee addNewEmployee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus) {
-        Employee newEmployee = new Employee(firstName, familyName, salary, employeeStatus);
+    public Employee addNewEmployee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
+        Employee newEmployee = new Employee(firstName, familyName, salary, employeeStatus, password);
         employeeDB.put(newEmployee.getEmployeeID(), newEmployee);
         return newEmployee;
     }
@@ -38,6 +38,15 @@ public class EmployeeController {
         return false;
     }
 
+    public boolean updateEmployeePassword(int id, String password) {
+        if (employeeDB.containsKey(id)) {
+            Employee employee = employeeDB.get(id);
+            employee.setPassword(password);
+            return true;
+        }
+        return false;
+    }
+
     public Employee findEmployee(int id) {
         return employeeDB.get(id);
     }
@@ -46,6 +55,14 @@ public class EmployeeController {
         if (employeeDB.containsKey(id)) {
             employeeDB.remove(id);
             return true;
+        }
+        return false;
+    }
+
+    public boolean login(int id, String password) {
+        if (employeeDB.containsKey(id)) {
+            Employee employee = employeeDB.get(id);
+            return employee.getPassword().equals(password);
         }
         return false;
     }

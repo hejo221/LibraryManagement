@@ -15,13 +15,15 @@ public class Employee {
     private String familyName;
     private double salary;
     private EmployeeStatus employeeStatus;
+    private String password;
 
-    public Employee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus) {
+    public Employee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
         this.employeeID = generateID();
         this.firstName = firstName;
         this.familyName = familyName;
         this.salary = salary;
         this.employeeStatus = employeeStatus;
+        this.password = password;
     }
 
     private int generateID() {
@@ -69,6 +71,14 @@ public class Employee {
 
     public void setEmployeeStatus(EmployeeStatus employeeStatus) {
         this.employeeStatus = employeeStatus;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public enum EmployeeStatus {
