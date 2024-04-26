@@ -7,9 +7,11 @@ import java.util.HashMap;
 
 public class EmployeeController {
     private HashMap<Integer, Employee> employeeDB;
+    private Integer loggedInEmployeeID;
 
     public EmployeeController() {
         this.employeeDB = new HashMap<>();
+        this.loggedInEmployeeID = null;
     }
 
     public Employee addNewEmployee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
@@ -59,11 +61,30 @@ public class EmployeeController {
         return false;
     }
 
+    public HashMap<Integer, Employee> getEmployeeDB() {
+        return employeeDB;
+    }
+
     public boolean login(int id, String password) {
         if (employeeDB.containsKey(id)) {
             Employee employee = employeeDB.get(id);
-            return employee.getPassword().equals(password);
+            if (employee.getPassword().equals(password)) {
+                loggedInEmployeeID = id;
+                return true;
+            }
         }
         return false;
+    }
+
+    public void logout() {
+        loggedInEmployeeID = null;
+    }
+
+    public Employee getLoggedInEmployee() {
+        if (loggedInEmployeeID != null) {
+            return employeeDB.get(loggedInEmployeeID);
+        } else {
+            return null;
+        }
     }
 }
