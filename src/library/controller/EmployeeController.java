@@ -1,5 +1,6 @@
 package library.controller;
 
+import library.model.Customer;
 import library.model.Employee;
 import library.model.Employee.EmployeeStatus;
 
@@ -14,17 +15,41 @@ public class EmployeeController {
         this.loggedInEmployeeID = null;
     }
 
+    public void printAllEmployees() {
+        if (employeeDB.isEmpty()) {
+            System.out.println("No employees found.");
+        } else {
+            for (Employee employee : employeeDB.values()) {
+                System.out.println(employee);
+            }
+        }
+    }
+
     public Employee addNewEmployee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
         Employee newEmployee = new Employee(firstName, familyName, salary, employeeStatus, password);
         employeeDB.put(newEmployee.getEmployeeID(), newEmployee);
         return newEmployee;
     }
 
-    public boolean updateEmployee(int id, String newFirstName, String newFamilyName, double newSalary) {
+    public Employee addNewEmployee(int employeeID, String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
+        Employee newEmployee = new Employee(employeeID, firstName, familyName, salary, employeeStatus, password);
+        employeeDB.put(newEmployee.getEmployeeID(), newEmployee);
+        return newEmployee;
+    }
+
+    public boolean updateEmployeeName(int id, String newFirstName, String newFamilyName) {
         if (employeeDB.containsKey(id)) {
             Employee employee = employeeDB.get(id);
             employee.setFirstName(newFirstName);
             employee.setFamilyName(newFamilyName);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updateEmployeeSalary(int id, double newSalary) {
+        if (employeeDB.containsKey(id)) {
+            Employee employee = employeeDB.get(id);
             employee.setSalary(newSalary);
             return true;
         }

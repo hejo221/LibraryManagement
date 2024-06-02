@@ -61,6 +61,12 @@ public class Customer {
         this.membershipStatus = membershipStatus;
     }
 
+    @Override
+    public String toString() {
+        return "Customer - Customer ID: " + getCustomerID() + ", First Name: " + getFirstName() + ", Family Name: " + getFamilyName()
+                + ", Membership Status: " + getMembershipStatus() + "\n";
+    }
+
     public enum MembershipStatus {
         ACTIVE, EXPIRED, SUSPENDED, CLOSED
     }

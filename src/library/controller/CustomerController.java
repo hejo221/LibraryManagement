@@ -12,6 +12,16 @@ public class CustomerController {
         this.customerDB = new HashMap<>();
     }
 
+    public void printAllCustomers() {
+        if (customerDB.isEmpty()) {
+            System.out.println("No customers found.");
+        } else {
+            for (Customer customer : customerDB.values()) {
+                System.out.println(customer);
+            }
+        }
+    }
+
     public Customer addNewCustomer(String firstName, String familyName) {
         Customer newCustomer = new Customer(firstName, familyName);
         customerDB.put(newCustomer.getCustomerID(), newCustomer);

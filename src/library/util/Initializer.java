@@ -1,9 +1,11 @@
 package library.util;
 
 import library.controller.LibraryController;
+import library.model.Customer;
 import library.model.Employee;
 import library.model.Employee.EmployeeStatus;
 import library.view.EmployeeView;
+import library.view.MainView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,12 +17,14 @@ public class Initializer {
 
         LibraryController libraryController = new LibraryController();
 
-        Employee manager = libraryController.getEmployeeController().addNewEmployee("Max", "Mustermann", 5000.0,
+        Employee manager = libraryController.getEmployeeController().addNewEmployee(123, "Max", "Mustermann", 5000.0,
                 EmployeeStatus.MANAGER, "passwort123");
-        Employee intern = libraryController.getEmployeeController().addNewEmployee("Maria", "Musterfrau", 2000.0,
+        Employee intern = libraryController.getEmployeeController().addNewEmployee(456, "Maria", "Musterfrau", 2000.0,
                 EmployeeStatus.INTERN, "geheim123");
-        Employee normal = libraryController.getEmployeeController().addNewEmployee("Tom", "Beispiel", 3500.0,
-                EmployeeStatus.NORMAL, "123456");
+        Employee normal = libraryController.getEmployeeController().addNewEmployee(789, "Tom", "Beispiel", 3500.0,
+                EmployeeStatus.EMPLOYEE, "123456");
+
+        Customer customer = libraryController.getCustomerController().addNewCustomer("Tom", "Bauer");
 
         System.out.println("Initialization complete.");
 
@@ -36,7 +40,7 @@ public class Initializer {
             System.out.println("ID: " + employeeID + ", Employee Name: " + employee.getFirstName() + " " + employee.getFamilyName());
         }
 
-        EmployeeView employeeView = new EmployeeView(libraryController);
-        employeeView.displayLogin();
+        MainView mainView = new MainView(libraryController);
+        mainView.displayLogin();
     }
 }

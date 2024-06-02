@@ -26,6 +26,15 @@ public class Employee {
         this.password = password;
     }
 
+    public Employee(int employeeID, String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
+        this.employeeID = employeeID;
+        this.firstName = firstName;
+        this.familyName = familyName;
+        this.salary = salary;
+        this.employeeStatus = employeeStatus;
+        this.password = password;
+    }
+
     private int generateID() {
         int randomID;
 
@@ -81,7 +90,13 @@ public class Employee {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "Employee - Employee ID: " + getEmployeeID() + ", First Name: " + getFirstName() + ", Family Name: " + getFamilyName()
+                + ", Employee Status: " + getEmployeeStatus() + ", Salary: " + getSalary();
+    }
+
     public enum EmployeeStatus {
-        INTERN, NORMAL, MANAGER
+        INTERN, EMPLOYEE, MANAGER
     }
 }
