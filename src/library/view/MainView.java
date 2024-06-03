@@ -50,7 +50,8 @@ public class MainView {
 
         switch (choice) {
             case 1:
-                // TO-DO
+                MediaView mediaView = new LibraryView(libraryController).getMediaView();
+                mediaView.displayGeneralOptions();
                 break;
             case 2:
                 // TO-DO

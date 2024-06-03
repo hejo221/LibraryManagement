@@ -4,8 +4,8 @@ public class Game extends Media {
     private String developer;
     private GamePlatform gamePlatform;
 
-    public Game(int mediaID, String title, int releaseYear, String developer, GamePlatform gamePlatform) {
-        super(mediaID, title, releaseYear);
+    public Game(String title, int releaseYear, String developer, GamePlatform gamePlatform) {
+        super(title, releaseYear);
         this.developer = developer;
         this.gamePlatform = gamePlatform;
     }
@@ -24,6 +24,12 @@ public class Game extends Media {
 
     public void setGamePlatform(GamePlatform gamePlatform) {
         this.gamePlatform = gamePlatform;
+    }
+
+    @Override
+    public String toString() {
+        return "Game - Media ID: " + getMediaID() + ", Title: " + getTitle() + ", Release Year: " + getReleaseYear() +
+                ", Developer: " + getDeveloper() + ", Platform: " + getGamePlatform();
     }
 
     public enum GamePlatform {

@@ -4,8 +4,8 @@ public class Book extends Media {
     private String author;
     private int numberOfPages;
 
-    public Book(int mediaID, String title, int releaseYear, String author, int numberOfPages) {
-        super(mediaID, title, releaseYear);
+    public Book(String title, int releaseYear, String author, int numberOfPages) {
+        super(title, releaseYear);
         this.author = author;
         this.numberOfPages = numberOfPages;
     }
@@ -24,5 +24,11 @@ public class Book extends Media {
 
     public void setNumberOfPages(int numberOfPages) {
         this.numberOfPages = numberOfPages;
+    }
+
+    @Override
+    public String toString() {
+        return "Book - Media ID: " + getMediaID() + ", Author: " + getTitle() + ", Release Year: " + getReleaseYear() +
+                ", Author: " + getAuthor() + ", Number of Pages: " + getNumberOfPages();
     }
 }

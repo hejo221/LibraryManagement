@@ -16,13 +16,13 @@ public class Customer {
     private MembershipStatus membershipStatus;
 
     public Customer(String firstName, String familyName) {
-        this.customerID = generateID();
+        this.customerID = generateCustomerID();
         this.firstName = firstName;
         this.familyName = familyName;
         this.membershipStatus = MembershipStatus.ACTIVE;
     }
 
-    private int generateID() {
+    private int generateCustomerID() {
         int randomID;
 
         do {

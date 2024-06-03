@@ -4,8 +4,8 @@ public class Movie extends Media {
     private String director;
     private int lengthInMinutes;
 
-    public Movie(int mediaID, String title, int releaseYear, String director, int lengthInMinutes) {
-        super(mediaID, title, releaseYear);
+    public Movie(String title, int releaseYear, String director, int lengthInMinutes) {
+        super(title, releaseYear);
         this.director = director;
         this.lengthInMinutes = lengthInMinutes;
     }
@@ -24,5 +24,11 @@ public class Movie extends Media {
 
     public void setLengthInMinutes(int lengthInMinutes) {
         this.lengthInMinutes = lengthInMinutes;
+    }
+
+    @Override
+    public String toString() {
+        return "Movie - Media ID: " + getMediaID() + ", Title: " + getTitle() + ", Release Year: " + getReleaseYear() +
+                ", Director: " + getDirector() + ", Length in Minutes: " + getLengthInMinutes();
     }
 }

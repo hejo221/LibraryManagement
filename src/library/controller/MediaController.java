@@ -17,33 +17,43 @@ public class MediaController {
         this.mediaDB = new HashMap<>();
     }
 
-    public Book addNewBook(int mediaID, String title, int releaseYear, String author, int numberOfPages) {
-        Book newBook = new Book(mediaID, title, releaseYear, author, numberOfPages);
-        mediaDB.put(mediaID, newBook);
+    public void printAllMedia() {
+        if (mediaDB.isEmpty()) {
+            System.out.println("No media found.");
+        } else {
+            for (Media media : mediaDB.values()) {
+                System.out.println(media);
+            }
+        }
+    }
+
+    public Book addNewBook(String title, int releaseYear, String author, int numberOfPages) {
+        Book newBook = new Book(title, releaseYear, author, numberOfPages);
+        mediaDB.put(newBook.getMediaID(), newBook);
         return newBook;
     }
 
-    public Magazine addNewMagazine(int mediaID, String title, int releaseYear, String publisher) {
-        Magazine newMagazine = new Magazine(mediaID, title, releaseYear, publisher);
-        mediaDB.put(mediaID, newMagazine);
+    public Magazine addNewMagazine(String title, int releaseYear, String publisher) {
+        Magazine newMagazine = new Magazine(title, releaseYear, publisher);
+        mediaDB.put(newMagazine.getMediaID(), newMagazine);
         return newMagazine;
     }
 
-    public Game addNewGame(int mediaID, String title, int releaseYear, String developer, GamePlatform gamePlatform) {
-        Game newGame = new Game(mediaID, title, releaseYear, developer, gamePlatform);
-        mediaDB.put(mediaID, newGame);
+    public Game addNewGame(String title, int releaseYear, String developer, GamePlatform gamePlatform) {
+        Game newGame = new Game(title, releaseYear, developer, gamePlatform);
+        mediaDB.put(newGame.getMediaID(), newGame);
         return newGame;
     }
 
-    public Movie addNewMovie(int mediaID, String title, int releaseYear, String director, int lengthInMinutes) {
-        Movie newMovie = new Movie(mediaID, title, releaseYear, director, lengthInMinutes);
-        mediaDB.put(mediaID, newMovie);
+    public Movie addNewMovie(String title, int releaseYear, String director, int lengthInMinutes) {
+        Movie newMovie = new Movie(title, releaseYear, director, lengthInMinutes);
+        mediaDB.put(newMovie.getMediaID(), newMovie);
         return newMovie;
     }
 
-    public Series addNewSeries(int mediaID, String title, int releaseYear, int numberOfSeason, int numberOfEpisodes) {
-        Series newSeries = new Series(mediaID, title, releaseYear, numberOfSeason, numberOfEpisodes);
-        mediaDB.put(mediaID, newSeries);
+    public Series addNewSeries(String title, int releaseYear, int numberOfSeason, int numberOfEpisodes) {
+        Series newSeries = new Series(title, releaseYear, numberOfSeason, numberOfEpisodes);
+        mediaDB.put(newSeries.getMediaID(), newSeries);
         return newSeries;
     }
 

@@ -18,7 +18,7 @@ public class Employee {
     private String password;
 
     public Employee(String firstName, String familyName, double salary, EmployeeStatus employeeStatus, String password) {
-        this.employeeID = generateID();
+        this.employeeID = generateEmployeeID();
         this.firstName = firstName;
         this.familyName = familyName;
         this.salary = salary;
@@ -35,7 +35,7 @@ public class Employee {
         this.password = password;
     }
 
-    private int generateID() {
+    private int generateEmployeeID() {
         int randomID;
 
         do {

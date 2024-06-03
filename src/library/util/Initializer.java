@@ -4,7 +4,8 @@ import library.controller.LibraryController;
 import library.model.Customer;
 import library.model.Employee;
 import library.model.Employee.EmployeeStatus;
-import library.view.EmployeeView;
+import library.model.Game;
+import library.model.Media;
 import library.view.MainView;
 
 import java.util.LinkedHashMap;
@@ -25,6 +26,9 @@ public class Initializer {
                 EmployeeStatus.EMPLOYEE, "123456");
 
         Customer customer = libraryController.getCustomerController().addNewCustomer("Tom", "Bauer");
+
+        Media media1 = libraryController.getMediaController().addNewBook("Soos", 2024, "Tobias Mehms", 1337);
+        Media media2 = libraryController.getMediaController().addNewGame("Snens", 2023, "Soos Games", Game.GamePlatform.PC);
 
         System.out.println("Initialization complete.");
 

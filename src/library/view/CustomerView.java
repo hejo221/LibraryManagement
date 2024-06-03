@@ -51,7 +51,6 @@ public class CustomerView {
             default:
                 System.out.println("Invalid choice. Please try again!");
         }
-
         displayOptions();
     }
 
@@ -78,7 +77,6 @@ public class CustomerView {
             System.out.println("Invalid input. Please enter a numeric customer ID.");
             scanner.nextLine();
         }
-        scanner.close();
         displayOptions();
     }
 
@@ -110,7 +108,6 @@ public class CustomerView {
         } catch (InputMismatchException exception) {
             System.out.println("Error: " + exception.getMessage());
         }
-        scanner.close();
         displayOptions();
     }
 
@@ -150,7 +147,6 @@ public class CustomerView {
             System.out.println("Error" + exception.getMessage());
             scanner.nextLine();
         }
-        scanner.close();
         displayOptions();
     }
 
@@ -185,7 +181,6 @@ public class CustomerView {
             System.out.println("Invalid input. Please enter a numeric customer ID.");
             scanner.nextLine();
         }
-        scanner.close();
         displayOptions();
     }
 }
