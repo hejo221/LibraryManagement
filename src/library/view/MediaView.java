@@ -85,12 +85,16 @@ public class MediaView {
                 addNewBook();
                 break;
             case 2:
+                updateMediaTitle();
                 break;
             case 3:
+                updateMediaReleaseYear();
                 break;
             case 4:
+                updateBookAuthor();
                 break;
             case 5:
+                updateBookNumberOfPages();
                 break;
             case 6:
                 displayGeneralOptions();
@@ -118,10 +122,13 @@ public class MediaView {
                 addNewMagazine();
                 break;
             case 2:
+                updateMediaTitle();
                 break;
             case 3:
+                updateMediaReleaseYear();
                 break;
             case 4:
+                updateMagazinePublisher();
                 break;
             case 5:
                 displayGeneralOptions();
@@ -150,12 +157,16 @@ public class MediaView {
                 addNewGame();
                 break;
             case 2:
+                updateMediaTitle();
                 break;
             case 3:
+                updateMediaReleaseYear();
                 break;
             case 4:
+                updateGameDeveloper();
                 break;
             case 5:
+                updateGamePlatform();
                 break;
             case 6:
                 displayGeneralOptions();
@@ -184,12 +195,16 @@ public class MediaView {
                 addNewMovie();
                 break;
             case 2:
+                updateMediaTitle();
                 break;
             case 3:
+                updateMediaReleaseYear();
                 break;
             case 4:
+                updateMovieDirector();
                 break;
             case 5:
+                updateMovieLength();
                 break;
             case 6:
                 displayGeneralOptions();
@@ -218,12 +233,16 @@ public class MediaView {
                 addNewSeries();
                 break;
             case 2:
+                updateMediaTitle();
                 break;
             case 3:
+                updateMediaReleaseYear();
                 break;
             case 4:
+                updateSeriesNumberOfSeasons();
                 break;
             case 5:
+                updateSeriesNumberOfEpisodes();
                 break;
             case 6:
                 displayGeneralOptions();
@@ -233,28 +252,57 @@ public class MediaView {
         }
     }
 
-    public void printAllMedia() {
+    private String getStringInput(String prompt, String error, boolean allowNumbers) {
+        String input;
+        while (true) {
+            System.out.println(prompt);
+            input = scanner.nextLine();
+            if (input.trim().isEmpty()) {
+                System.out.println(error);
+            } else if (!allowNumbers && input.matches(".*\\d.*")) {
+                System.out.println("Numeral values are not allowed. " + error);
+            } else {
+                break;
+            }
+        }
+        return input;
+    }
+
+    private int getIntInput(String prompt, String error) {
+        int input;
+        while (true) {
+            try {
+                System.out.println(prompt);
+                input = scanner.nextInt();
+                if (input < 0) {
+                    throw new InputMismatchException(error);
+                }
+                scanner.nextLine();
+                break;
+            } catch (InputMismatchException exception) {
+                System.out.println(exception.getMessage());
+                scanner.nextLine();
+            }
+        }
+        return input;
+    }
+
+    private void printAllMedia() {
         libraryController.getMediaController().printAllMedia();
         displayGeneralOptions();
     }
 
-    public void findMediaByID() {
-        System.out.println("Searching for specific media: ");
+    private void findMediaByID() {
+        System.out.println("Searching for specific Media by ID: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the Media ID: ");
-            int id = scanner.nextInt();
+        int id = getIntInput("Enter the Media ID to search for: ", "Invalid input. Please enter a numeric Media ID.");
 
-            Media media = libraryController.getMediaController().findMedia(id);
-            if (media != null) {
-                System.out.println("Media found: " + media);
-            } else {
-                System.out.println("Media not found.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric media ID.");
-            scanner.nextLine();
+        Media media = libraryController.getMediaController().findMedia(id);
+        if (media != null) {
+            System.out.println("Media found: " + media);
+        } else {
+            System.out.println("Media not found.");
         }
 
         displayGeneralOptions();
@@ -262,103 +310,44 @@ public class MediaView {
 
     public void removeMedia() {
         System.out.println("Removing Media: ");
-        scanner.nextLine();
 
-        try {
-            System.out.println("Enter the Media ID to remove: ");
-            int id = scanner.nextInt();
+        int id = getIntInput("Enter the Media ID to remove: ", "Invalid input. Please enter a numeric Media ID.");
 
-            Media media = libraryController.getMediaController().findMedia(id);
-            if (media != null) {
-                System.out.println("Media found" + media);
-                System.out.println("Are you sure that you want to remove this media? (yes/no): ");
-                String confirmation = scanner.nextLine();
+        Media media = libraryController.getMediaController().findMedia(id);
+        if (media != null) {
+            System.out.println("Media found: " + media);
+            String confirmation = getStringInput("Are you sure that you want to remove this media? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'.", false);
 
-                if (confirmation.equalsIgnoreCase("yes")) {
-                    boolean removeSuccess = libraryController.getMediaController().removeMedia(id);
-                    if (removeSuccess) {
-                        System.out.println("Media removed successfully.");
-                    } else {
-                        System.out.println("Failed to remove Media.");
-                    }
+            if (confirmation.equalsIgnoreCase("yes")) {
+                boolean removeSuccess = libraryController.getMediaController().removeMedia(id);
+                if (removeSuccess) {
+                    System.out.println("Media removed successfully.");
                 } else {
-                    System.out.println("Media removal canceled.");
+                    System.out.println("Failed to remove Media.");
                 }
             } else {
-                System.out.println("Media not found.");
+                System.out.println("Media removal canceled.");
             }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric Media ID.");
-            scanner.nextLine();
+        } else {
+            System.out.println("Media not found.");
         }
 
         displayGeneralOptions();
     }
 
-    public void addNewBook() {
-        System.out.println("Adding new book: ");
+    private void addNewBook() {
+        System.out.println("Adding new book: \n");
         scanner.nextLine();
 
-        String title;
-        while (true) {
-            System.out.println("Enter the title of the book: ");
-            title = scanner.nextLine();
-            if (!title.trim().isEmpty()) {
-                break;
-            } else {
-                System.out.println("Title cannot be empty. Please enter a valid title.");
-            }
-        }
-
-        int releaseYear;
-        while (true) {
-            try {
-                System.out.println("Enter the release year of the book: ");
-                releaseYear = scanner.nextInt();
-                if (releaseYear < 0) {
-                    throw new InputMismatchException("Release Year must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
-
-        String author;
-        while (true) {
-            System.out.println("Enter the author of the book: ");
-            author = scanner.nextLine();
-            if (author.matches(".*\\d.*")) {
-                System.out.println("Numeral values are not allowed in names. Please enter a valid author.");
-            } else {
-                break;
-            }
-        }
-
-        int numberOfPages;
-        while (true) {
-            try {
-                System.out.println("Enter the number of pages of the book: ");
-                numberOfPages = scanner.nextInt();
-                if (numberOfPages < 0) {
-                    throw new InputMismatchException("Number of Pages must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
+        String title = getStringInput("Enter the title of the book: ", "The title of the book cannot be empty.", true);
+        int releaseYear = getIntInput("Enter the release year of the book: ", "The release year of the book must not be negative");
+        String author = getStringInput("Enter the author of the book: ", "The author of the book cannot be empty.", false);
+        int numberOfPages = getIntInput("Enter the number of pages of the book: ", "The number of pages of the book must not be negative");
 
         Media book = libraryController.getMediaController().addNewBook(title, releaseYear, author, numberOfPages);
 
         if (book != null) {
-            System.out.println("Book has successfully been added.");
+            System.out.println("The book has successfully been added.");
             System.out.println("New Media: " + book);
         } else {
             System.out.println("Failed to add the new book.");
@@ -367,53 +356,18 @@ public class MediaView {
         displayGeneralOptions();
     }
 
-    public void addNewMagazine() {
-        System.out.println("Adding new magazine: ");
+    private void addNewMagazine() {
+        System.out.println("Adding new magazine: \n");
         scanner.nextLine();
 
-        String title;
-        while (true) {
-            System.out.println("Enter the title of the magazine: ");
-            title = scanner.nextLine();
-            if (!title.trim().isEmpty()) {
-                break;
-            } else {
-                System.out.println("Title cannot be empty.");
-            }
-        }
-
-        int releaseYear;
-        while (true) {
-            try {
-                System.out.println("Enter the release year of the magazine: ");
-                releaseYear = scanner.nextInt();
-                if (releaseYear < 0) {
-                    throw new InputMismatchException("Release Year must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
-
-        String publisher;
-        while (true) {
-            System.out.println("Enter the publisher of the magazine: ");
-            publisher = scanner.nextLine();
-            if (publisher.matches(".*\\d.*")) {
-                System.out.println("Numeral values are not allowed in names. Please enter a valid author.");
-            } else {
-                break;
-            }
-        }
+        String title = getStringInput("Enter the title of the magazine: ", "The title of the magazine cannot be empty.", true);
+        int releaseYear = getIntInput("Enter the release year of the magazine: ", "The release year of the magazine must not be negative");
+        String publisher = getStringInput("Enter the publisher of the magazine: ", "The publisher of the magazine cannot be empty.", false);
 
         Media magazine = libraryController.getMediaController().addNewMagazine(title, releaseYear, publisher);
 
         if (magazine != null) {
-            System.out.println("Magazine has successfully been added.");
+            System.out.println("The magazine has successfully been added.");
             System.out.println("New Media: " + magazine);
         } else {
             System.out.println("Failed to add the new magazine.");
@@ -422,70 +376,41 @@ public class MediaView {
         displayGeneralOptions();
     }
 
-    public void addNewGame() {
-        System.out.println("Adding new game: ");
+    private void addNewGame() {
+        System.out.println("Adding new game: \n");
         scanner.nextLine();
 
-        String title;
-        while (true) {
-            System.out.println("Enter the title of the game: ");
-            title = scanner.nextLine();
-            if (!title.trim().isEmpty()) {
-                break;
-            } else {
-                System.out.println("Title cannot be empty. Please enter a valid title.");
-            }
+        String title = getStringInput("Enter the title of the game: ", "The title of the game cannot be empty.", true);
+        int releaseYear = getIntInput("Enter the release year of the game: ", "The release year of the game must not be negative");
+        String developer = getStringInput("Enter the developer of the game: ", "The developer of the game cannot be empty.", false);
+        String platform = getStringInput("Enter the platform of the game (PC, PLAYSTATION, XBOX, BOARD): ", "The developer of the game cannot be empty", false).toUpperCase();
+
+        Game.GamePlatform gamePlatform = Game.GamePlatform.valueOf(platform);
+        Media game = libraryController.getMediaController().addNewGame(title, releaseYear, developer, gamePlatform);
+
+        if (game != null) {
+            System.out.println("The game has successfully been added.");
+            System.out.println("New Media: " + game);
+        } else {
+            System.out.println("Failed to add the new game.");
         }
 
-        int releaseYear;
-        while (true) {
-            try {
-                System.out.println("Enter the release year of the game: ");
-                releaseYear = scanner.nextInt();
-                if (releaseYear < 0) {
-                    throw new InputMismatchException("Release Year must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
+        displayGeneralOptions();
+    }
 
-        String director;
-        while (true) {
-            System.out.println("Enter the director of the movie: ");
-            director = scanner.nextLine();
-            if (!director.trim().isEmpty()) {
-                System.out.println("Developer can not be empty.");
-            } else {
-                break;
-            }
-        }
+    private void addNewMovie() {
+        System.out.println("Adding new movie: \n");
+        scanner.nextLine();
 
-        int lengthInMinutes;
-        while (true) {
-            try {
-                System.out.println("Enter the length in minutes of the movue: ");
-                lengthInMinutes = scanner.nextInt();
-                if (lengthInMinutes < 0) {
-                    throw new InputMismatchException("Length in minutes must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
+        String title = getStringInput("Enter the title of the movie: ", "The title of the movie cannot be empty.", true);
+        int releaseYear = getIntInput("Enter the release year of the movie: ", "The release year of the movie must not be empty");
+        String director = getStringInput("Enter the director of the movie: ", "The director of the movie cannot be empty.", false);
+        int lengthInMinutes = getIntInput("Enter the length in minutes of the movie: ", "The length in minutes of the movie must not be negative");
 
         Media movie = libraryController.getMediaController().addNewMovie(title, releaseYear, director, lengthInMinutes);
 
         if (movie != null) {
-            System.out.println("Movie has successfully been added.");
+            System.out.println("The movie has successfully been added.");
             System.out.println("New Media: " + movie);
         } else {
             System.out.println("Failed to add the new movie.");
@@ -494,151 +419,342 @@ public class MediaView {
         displayGeneralOptions();
     }
 
-    public void addNewMovie() {
-        System.out.println("Adding new movie: ");
+    private void addNewSeries() {
+        System.out.println("Adding new series: \n");
         scanner.nextLine();
 
-        String title;
-        while (true) {
-            System.out.println("Enter the title of the movie: ");
-            title = scanner.nextLine();
-            if (!title.trim().isEmpty()) {
-                break;
-            } else {
-                System.out.println("Title cannot be empty. Please enter a valid title.");
-            }
-        }
+        String title = getStringInput("Enter the title of the series: ", "The title of the series cannot be empty.", true);
+        int releaseYear = getIntInput("Enter the release year of the series: ", "The release year of the series must not be empty");
+        int numberOfSeasons = getIntInput("Enter the number of seasons of the series: ", "The number of seasons of the series must not be negative.");
+        int numberOfEpisodes = getIntInput("Enter the number of episodes of the series: ", "The number of episodes of the series must not be negative");
 
-        int releaseYear;
-        while (true) {
-            try {
-                System.out.println("Enter the release year of the movie: ");
-                releaseYear = scanner.nextInt();
-                if (releaseYear < 0) {
-                    throw new InputMismatchException("Release Year must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
+        Media series = libraryController.getMediaController().addNewSeries(title, releaseYear, numberOfSeasons, numberOfEpisodes);
 
-        String author;
-        while (true) {
-            System.out.println("Enter the author of the book: ");
-            author = scanner.nextLine();
-            if (author.matches(".*\\d.*")) {
-                System.out.println("Numeral values are not allowed in names. Please enter a valid author.");
-            } else {
-                break;
-            }
-        }
-
-        int numberOfPages;
-        while (true) {
-            try {
-                System.out.println("Enter the number of pages of the book: ");
-                numberOfPages = scanner.nextInt();
-                if (numberOfPages < 0) {
-                    throw new InputMismatchException("Number of Pages must not be negative.");
-                } else {
-                    scanner.nextLine();
-                    break;
-                }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
-
-        Media book = libraryController.getMediaController().addNewBook(title, releaseYear, author, numberOfPages);
-
-        if (book != null) {
-            System.out.println("Book has successfully been added.");
-            System.out.println("New Media: " + book);
+        if (series != null) {
+            System.out.println("The series has successfully been added.");
+            System.out.println("New Media: " + series);
         } else {
-            System.out.println("Failed to add the new book.");
+            System.out.println("Failed to add the new series.");
         }
 
         displayGeneralOptions();
     }
 
-    public void addNewSeries() {
-        System.out.println("Adding new series: ");
+    private void updateMediaTitle() {
+        System.out.println("Updating the title of a media: ");
         scanner.nextLine();
 
-        String title;
-        while (true) {
-            System.out.println("Enter the title of the series: ");
-            title = scanner.nextLine();
-            if (!title.trim().isEmpty()) {
-                break;
+        try {
+            int id = getIntInput("Enter the Media ID to update the title: ", "The Media ID must not be negative.");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media != null) {
+                System.out.println("The following media will be updated: " + media);
+                String newTitle = getStringInput("Enter the new title: ", "The new title cannot be empty.", true);
+
+                boolean updateSuccess = libraryController.getMediaController().updateMediaTitle(id, newTitle);
+                if (updateSuccess) {
+                    System.out.println("The title has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the title.");
+                }
             } else {
-                System.out.println("Title cannot be empty. Please enter a valid title.");
+                System.out.println("Media not found.");
             }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Please enter a valid Media ID.");
+            scanner.nextLine();
         }
 
-        int releaseYear;
-        while (true) {
-            try {
-                System.out.println("Enter the release year of the series: ");
-                releaseYear = scanner.nextInt();
-                if (releaseYear < 0) {
-                    throw new InputMismatchException("Release Year must not be negative.");
+        displayGeneralOptions();
+    }
+
+    private void updateMediaReleaseYear() {
+        System.out.println("Updating the release year of a media: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the release year: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media != null) {
+                System.out.println("The following media will be updated: " + media);
+                int newReleaseYear = getIntInput("Enter the new release year: ", "The new release year must not be negative.");
+
+                boolean updateSuccess = libraryController.getMediaController().updateMediaReleaseYear(id, newReleaseYear);
+                if (updateSuccess) {
+                    System.out.println("The release year has been updated successfully.");
                 } else {
-                    scanner.nextLine();
-                    break;
+                    System.out.println("Failed to update the release year.");
                 }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
+            } else {
+                System.out.println("Media not found.");
             }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
         }
 
-        int numberOfSeasons;
-        while (true) {
-            try {
-                System.out.println("Enter the number of seasons of the series: ");
-                numberOfSeasons = scanner.nextInt();
-                if (numberOfSeasons < 0) {
-                    throw new InputMismatchException("Number of seaons must not be negative.");
+        displayGeneralOptions();
+    }
+
+    private void updateBookAuthor() {
+        System.out.println("Updating the author of a book: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the author: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Book book) {
+                System.out.println("The following media will be updated: " + book);
+                String newAuthor = getStringInput("Enter the new author: ", "The new author cannot be empty.", false);
+
+                boolean updateSuccess = libraryController.getMediaController().updateBookAuthor(id, newAuthor);
+                if (updateSuccess) {
+                    System.out.println("The author has been updated successfully.");
                 } else {
-                    scanner.nextLine();
-                    break;
+                    System.out.println("Failed to update the author.");
                 }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
+            } else {
+                System.out.println("Media not found.");
             }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
         }
 
-        int numberOfEpisodes;
-        while (true) {
-            try {
-                System.out.println("Enter the number of episodes of the series: ");
-                numberOfEpisodes = scanner.nextInt();
-                if (numberOfEpisodes < 0) {
-                    throw new InputMismatchException("Number of episodes must not be negative.");
+        displayGeneralOptions();
+    }
+
+    private void updateBookNumberOfPages() {
+        System.out.println("Updating the number of pages of a book: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the number of pages: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Book book) {
+                System.out.println("The following media will be updated: " + book);
+                int numberOfPages = getIntInput("Enter the new author: ", "The new number of pages must not be negative.");
+
+                boolean updateSuccess = libraryController.getMediaController().updateBookPages(id, numberOfPages);
+                if (updateSuccess) {
+                    System.out.println("The number of pages has been updated successfully.");
                 } else {
-                    scanner.nextLine();
-                    break;
+                    System.out.println("Failed to update the number of pages.");
                 }
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
+            } else {
+                System.out.println("Media not found.");
             }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
         }
 
-        Media series = libraryController.getMediaController().addNewSeries(title, releaseYear, numberOfSeasons, numberOfEpisodes);
+        displayGeneralOptions();
+    }
 
-        if (series != null) {
-            System.out.println("Series has successfully been added.");
-            System.out.println("New Media: " + series);
-        } else {
-            System.out.println("Failed to add the new series.");
+    private void updateMagazinePublisher() {
+        System.out.println("Updating the publisher of a magazine: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the publisher: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Magazine magazine) {
+                System.out.println("The following magazine will be updated: " + magazine);
+                String newPublisher = getStringInput("Enter the new publisher: ", "The new publisher cannot be empty.", true);
+
+                boolean updateSuccess = libraryController.getMediaController().updateMagazinePublisher(id, newPublisher);
+                if (updateSuccess) {
+                    System.out.println("The publisher has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the publisher.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateGameDeveloper() {
+        System.out.println("Updating the developer of a game: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the developer: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Game game) {
+                System.out.println("The following game will be updated: " + game);
+                String newDeveloper = getStringInput("Enter the new developer: ", "The new developer cannot be empty.", true);
+
+                boolean updateSuccess = libraryController.getMediaController().updateGameDeveloper(id, newDeveloper);
+                if (updateSuccess) {
+                    System.out.println("The developer has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the developer.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateGamePlatform() {
+        System.out.println("Updating the platform of a game: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the platform: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Game game) {
+                System.out.println("The following game will be updated: " + game);
+                String newPlatform = getStringInput("Enter the new platform (PC, PLAYSTATION, XBOX, BOARD): ", "The new platform cannot be empty.", true).toUpperCase();
+
+                Game.GamePlatform gamePlatform = Game.GamePlatform.valueOf(newPlatform);
+                boolean updateSuccess = libraryController.getMediaController().updateGamePlatform(id, gamePlatform);
+                if (updateSuccess) {
+                    System.out.println("The platform has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the platform.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateMovieDirector() {
+        System.out.println("Updating the director of a movie: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the director: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Movie movie) {
+                System.out.println("The following movie will be updated: " + movie);
+                String newDirector = getStringInput("Enter the new director: ", "The new director cannot be empty.", false);
+
+                boolean updateSuccess = libraryController.getMediaController().updateMovieDirector(id, newDirector);
+                if (updateSuccess) {
+                    System.out.println("The director has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the director.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateMovieLength() {
+        System.out.println("Updating the length in minutes of a movie: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the length in minutes: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Movie movie) {
+                System.out.println("The following movie will be updated: " + movie);
+                int newLength = getIntInput("Enter the new length in minutes: ", "The new length in minutes must not be negative.");
+
+                boolean updateSuccess = libraryController.getMediaController().updateMovieLengthInMinutes(id, newLength);
+                if (updateSuccess) {
+                    System.out.println("The length in minutes has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the length in minutes.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateSeriesNumberOfSeasons() {
+        System.out.println("Updating the number of seasons of a series: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the number of seasons: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Series series) {
+                System.out.println("The following series will be updated: " + series);
+                int newNumberOfSeasons = getIntInput("Enter the new number of seasons: ", "The new number of seasons must not be negative.");
+
+                boolean updateSuccess = libraryController.getMediaController().updateSeriesNumberOfSeasons(id, newNumberOfSeasons);
+                if (updateSuccess) {
+                    System.out.println("The number of seasons has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the number of seasons.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
+        }
+
+        displayGeneralOptions();
+    }
+
+    private void updateSeriesNumberOfEpisodes() {
+        System.out.println("Updating the number of episodes of a series: ");
+        scanner.nextLine();
+
+        try {
+            int id = getIntInput("Enter the Media ID to update the number of episodes: ", "The Media ID must not be negative");
+            Media media = libraryController.getMediaController().findMedia(id);
+
+            if (media instanceof Series series) {
+                System.out.println("The following series will be updated: " + series);
+                int newNumberOfEpisodes = getIntInput("Enter the new number of episodes: ", "The new number of episodes must not be negative.");
+
+                boolean updateSuccess = libraryController.getMediaController().updateSeriesNumberOfSeasons(id, newNumberOfEpisodes);
+                if (updateSuccess) {
+                    System.out.println("The number of episodes has been updated successfully.");
+                } else {
+                    System.out.println("Failed to update the number of episodes.");
+                }
+            } else {
+                System.out.println("Media not found.");
+            }
+        } catch (InputMismatchException exception) {
+            System.out.println("Invalid input. Enter a valid Media ID.");
+            scanner.nextLine();
         }
 
         displayGeneralOptions();

@@ -150,7 +150,7 @@ public class MediaController {
         return false;
     }
 
-    public boolean updateSeriesNumberOfSeason(int id, int newNumberOfSeason) {
+    public boolean updateSeriesNumberOfSeasons(int id, int newNumberOfSeason) {
         Media media = mediaDB.get(id);
         if (media instanceof Series) {
             ((Series) media).setNumberOfSeason(newNumberOfSeason);

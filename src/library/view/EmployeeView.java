@@ -143,8 +143,8 @@ public class EmployeeView {
             Employee employee = libraryController.getEmployeeController().findEmployee(id);
             if (employee != null) {
                 System.out.println("The following employee will be updated: " + employee);
-                String newFirstName, newFamilyName;
 
+                String newFirstName;
                 while (true) {
                     System.out.println("Enter the new first name: ");
                     newFirstName = scanner.nextLine();
@@ -155,6 +155,7 @@ public class EmployeeView {
                     }
                 }
 
+                String newFamilyName;
                 while (true) {
                     System.out.println("Enter the new family name: ");
                     newFamilyName = scanner.nextLine();
