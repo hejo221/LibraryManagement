@@ -68,6 +68,6 @@ public class Customer {
     }
 
     public enum MembershipStatus {
-        ACTIVE, EXPIRED, SUSPENDED, CLOSED
+        ACTIVE, SUSPENDED
     }
 }

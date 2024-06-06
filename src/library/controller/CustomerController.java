@@ -38,7 +38,7 @@ public class CustomerController {
         return false;
     }
 
-    public boolean updateCustomerState(int id, MembershipStatus newMembershipStatus) {
+    public boolean updateCustomerStatus(int id, MembershipStatus newMembershipStatus) {
         if (customerDB.containsKey(id)) {
             Customer customer = customerDB.get(id);
             customer.setMembershipStatus(newMembershipStatus);

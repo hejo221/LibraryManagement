@@ -16,7 +16,7 @@ public class MainView {
     }
 
     public void displayLogin() {
-        System.out.println("~Please to login to access the Library Management~\n");
+        System.out.println("Please to login to access the Library Management\n");
         System.out.println("Enter your Employee ID: ");
         int employeeID = scanner.nextInt();
         scanner.nextLine();
@@ -36,7 +36,7 @@ public class MainView {
     public void displayOptions() {
         Employee loggedInEmployee = libraryController.getEmployeeController().getLoggedInEmployee();
 
-        System.out.println("~~~ Welcome to the Library! ~~~\n");
+        System.out.println("\n~~~ Welcome to the Library! ~~~\n");
         System.out.println("Here are your options:");
         System.out.println("1: Manage the Media Catalogue");
         System.out.println("2: Manage Media Copies");
@@ -54,7 +54,8 @@ public class MainView {
                 mediaView.displayGeneralOptions();
                 break;
             case 2:
-                // TO-DO
+                CopyView copyView = new LibraryView(libraryController).getCopyView();
+                copyView.displayOptions();
                 break;
             case 3:
                 CustomerView customerView = new LibraryView(libraryController).getCustomerView();
@@ -69,7 +70,9 @@ public class MainView {
                 }
                 break;
             case 5:
-                // TO-DO
+                libraryController.getEmployeeController().logout();
+                System.out.println("Logout successful.");
+                displayLogin();
                 break;
             case 6:
                 scanner.close();

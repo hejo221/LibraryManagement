@@ -15,16 +15,35 @@ public class CopyController {
         this.copyDB = new HashMap<>();
     }
 
-    public Copy addNewCopy(int id, Media media) {
-        Copy newCopy = new Copy(id, media);
-        copyDB.put(id, newCopy);
+    public void printAllCopies() {
+        if (copyDB.isEmpty()) {
+            System.out.println("No copies found.");
+        } else {
+            for (Copy copy : copyDB.values()) {
+                System.out.println(copy);
+            }
+        }
+    }
+
+    public Copy findCopy(int id) {
+        return copyDB.get(id);
+    }
+
+    public Copy addNewCopy(Media media) {
+        Copy newCopy = new Copy(media);
+        copyDB.put(newCopy.getCopyID(), newCopy);
         return newCopy;
     }
 
     public boolean removeCopy(int id) {
         if (copyDB.containsKey(id)) {
-            copyDB.remove(id);
-            return true;
+            Copy copy = copyDB.get(id);
+            if (copy.isBorrowed()) {
+                return false;
+            } else {
+                copyDB.remove(id);
+                return true;
+            }
         }
         return false;
     }
@@ -59,18 +78,10 @@ public class CopyController {
         return false;
     }
 
-    public boolean updateCopyBorrowDate(int id, LocalDate borrowDate) {
+    public boolean extendCopyReturnDate(int id) {
         if (copyDB.containsKey(id)) {
             Copy copy = copyDB.get(id);
-            copy.setBorrowDate(borrowDate);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean updateCopyReturnDate(int id, LocalDate returnDate) {
-        if (copyDB.containsKey(id)) {
-            Copy copy = copyDB.get(id);
+            LocalDate returnDate = LocalDate.now().plusDays(28);
             copy.setReturnDate(returnDate);
             return true;
         }

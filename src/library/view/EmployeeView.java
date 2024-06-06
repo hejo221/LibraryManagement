@@ -52,7 +52,7 @@ public class EmployeeView {
                 removeEmployee();
                 break;
             case 8:
-                MainView mainView = new MainView(libraryController);
+                MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
             default:

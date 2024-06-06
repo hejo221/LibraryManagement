@@ -58,7 +58,7 @@ public class MediaView {
                 removeMedia();
                 break;
             case 9:
-                MainView mainView = new MainView(libraryController);
+                MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
             default:
@@ -299,6 +299,7 @@ public class MediaView {
         int id = getIntInput("Enter the Media ID to search for: ", "Invalid input. Please enter a numeric Media ID.");
 
         Media media = libraryController.getMediaController().findMedia(id);
+
         if (media != null) {
             System.out.println("Media found: " + media);
         } else {
@@ -743,7 +744,7 @@ public class MediaView {
                 System.out.println("The following series will be updated: " + series);
                 int newNumberOfEpisodes = getIntInput("Enter the new number of episodes: ", "The new number of episodes must not be negative.");
 
-                boolean updateSuccess = libraryController.getMediaController().updateSeriesNumberOfSeasons(id, newNumberOfEpisodes);
+                boolean updateSuccess = libraryController.getMediaController().updateSeriesNumberOfEpisodes(id, newNumberOfEpisodes);
                 if (updateSuccess) {
                     System.out.println("The number of episodes has been updated successfully.");
                 } else {

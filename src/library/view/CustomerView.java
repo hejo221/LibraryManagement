@@ -2,7 +2,6 @@ package library.view;
 
 import library.controller.LibraryController;
 import library.model.Customer;
-import library.model.Customer.MembershipStatus;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -18,12 +17,13 @@ public class CustomerView {
 
     public void displayOptions() {
         System.out.println("Your options are: ");
-        System.out.println("1: Print all Customer Accounts");
-        System.out.println("2: Find Specific Customer");
-        System.out.println("3: Add new Customer");
-        System.out.println("4: Update Customer");
-        System.out.println("5: Remove Customer");
-        System.out.println("6: Go back to the main menu");
+        System.out.println("1: Print all customer accounts");
+        System.out.println("2: Find specific customer");
+        System.out.println("3: Add new customer");
+        System.out.println("4: Update customer");
+        System.out.println("5: Reactivate suspended customer account");
+        System.out.println("6: Remove customer");
+        System.out.println("7: Go back to the main menu");
 
         System.out.println("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -42,10 +42,13 @@ public class CustomerView {
                 updateCustomer();
                 break;
             case 5:
-                removeCustomer();
+                reactivateAccount();
                 break;
             case 6:
-                MainView mainView = new MainView(libraryController);
+                removeCustomer();
+                break;
+            case 7:
+                MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
             default:
@@ -54,133 +57,152 @@ public class CustomerView {
         displayOptions();
     }
 
-    public void displayAllCustomers() {
+    private String getStringInput(String prompt, String error) {
+        String input;
+        while (true) {
+            System.out.println(prompt);
+            input = scanner.nextLine();
+            if (input.trim().isEmpty()) {
+                System.out.println(error);
+            } else if (input.matches(".*\\d.*")) {
+                System.out.println("Numeral values are not allowed. " + error);
+            } else {
+                break;
+            }
+        }
+        return input;
+    }
+
+    private int getIntInput(String prompt, String error) {
+        int input;
+        while (true) {
+            try {
+                System.out.println(prompt);
+                input = scanner.nextInt();
+                if (input < 0) {
+                    throw new InputMismatchException(error);
+                }
+                scanner.nextLine();
+                break;
+            } catch (InputMismatchException exception) {
+                System.out.println(exception.getMessage());
+                scanner.nextLine();
+            }
+        }
+        return input;
+    }
+
+    private void displayAllCustomers() {
         libraryController.getCustomerController().printAllCustomers();
         displayOptions();
     }
 
-    public void findCustomerByID() {
-        System.out.println("Searching for a specific customer: ");
+    private void findCustomerByID() {
+        System.out.println("Searching for a specific customer by ID: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the Customer ID: ");
-            int id = scanner.nextInt();
+        int id = getIntInput("Enter the customer ID to search for: ", "Invalid input. Enter a numeric customer ID.");
 
-            Customer customer = libraryController.getCustomerController().findCustomer(id);
-            if (customer != null) {
-                System.out.println("Customer found: " + customer);
-            } else {
-                System.out.println("Customer not found.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric customer ID.");
-            scanner.nextLine();
+        Customer customer = libraryController.getCustomerController().findCustomer(id);
+        if (customer != null) {
+            System.out.println("Customer found: " + customer);
+        } else {
+            System.out.println("Customer not found.");
         }
+
         displayOptions();
     }
 
-    public void addNewCustomer() {
+    private void addNewCustomer() {
         System.out.println("Adding a new customer:");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter first name of the customer: ");
-            String firstName = scanner.nextLine();
-            if (firstName.matches(".*\\d.*")) {
-                throw new InputMismatchException("Numeral values are not allowed in names.");
-            }
+        String firstName = getStringInput("Enter the first name of the customer: ", "The first name of the customer cannot be empty.");
+        String familyName = getStringInput("Enter the family name of the customer: ", "The family name of the customer cannot be empty.");
 
-            System.out.println("Enter family name of the customer: ");
-            String familyName = scanner.nextLine();
-            if (familyName.matches(".*\\d.*")) {
-                throw new InputMismatchException("Numeral values are not allowed in names.");
-            }
+        Customer customer = libraryController.getCustomerController().addNewCustomer(firstName, familyName);
 
-            Customer customer = libraryController.getCustomerController().addNewCustomer(firstName, familyName);
-
-            if (customer != null) {
-                System.out.println("Customer has been created successfully.");
-                System.out.println(customer);
-            } else {
-                System.out.println("Failed to add the new customer.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Error: " + exception.getMessage());
+        if (customer != null) {
+            System.out.println("The new customer has been created successfully.");
+            System.out.println("New customer: " + customer);
+        } else {
+            System.out.println("Failed to create the new customer.");
         }
+
         displayOptions();
     }
 
-    public void updateCustomer() {
+    private void updateCustomer() {
         System.out.println("Updating an existing customer: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the customer ID to update: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
+        int id = getIntInput("Enter the ID of the customer to update: ", "Invalid input. Enter a numeric customer ID.");
 
-            Customer customer = libraryController.getCustomerController().findCustomer(id);
-            if (customer != null) {
-                System.out.println("Enter the new first name: ");
-                String newFirstName = scanner.nextLine();
-                if (newFirstName.matches(".*\\d.*")) {
-                    throw new InputMismatchException("Numeral values are not allowed in names.");
-                }
+        Customer customer = libraryController.getCustomerController().findCustomer(id);
 
-                System.out.println("Enter the new family name: ");
-                String newFamilyName = scanner.nextLine();
-                if (newFamilyName.matches(".*\\d.*")) {
-                    throw new InputMismatchException("Numeral values are not allowed in names.");
-                }
+        if (customer != null) {
+            String newFirstName = getStringInput("Enter the new first name: ", "The new first name cannot be empty.");
+            String newFamilyName = getStringInput("Enter the new family name: ", "The new family name cannot be empty.");
 
-                boolean updateSuccess = libraryController.getCustomerController().updateCustomer(id, newFirstName, newFirstName);
-                if (updateSuccess) {
-                    System.out.println("The customer has been updated successfully.");
-                } else {
-                    System.out.println("Failed to update customer.");
-                }
+            boolean updateSucess = libraryController.getCustomerController().updateCustomer(id, newFirstName, newFamilyName);
+            if (updateSucess) {
+                System.out.println("The customer has been updated successfully.");
             } else {
-                System.out.println("Customer not found.");
+                System.out.println("Failed to update the customer.");
             }
-        } catch (InputMismatchException exception) {
-            System.out.println("Error" + exception.getMessage());
-            scanner.nextLine();
+        } else {
+            System.out.println("Customer not found.");
         }
+
         displayOptions();
     }
 
-    public void removeCustomer() {
+    private void reactivateAccount() {
+        System.out.println("Reactivating a suspended account: ");
+        scanner.nextLine();
+
+        int id = getIntInput("Enter the ID of the suspended customer: ", "Invalid input. Enter a numeric customer ID");
+
+        Customer customer = libraryController.getCustomerController().findCustomer(id);
+
+        if (customer != null && customer.getMembershipStatus() == Customer.MembershipStatus.SUSPENDED) {
+            String confirmation = getStringInput("Please confirm that the outstanding has been paid to reactivate the customer account (yes/no):", "Invalid input. Please enter 'yes' or 'no'!");
+            if (confirmation.equalsIgnoreCase("yes")) {
+                boolean reactiveSuccess = libraryController.getCustomerController().updateCustomerStatus(id, Customer.MembershipStatus.ACTIVE);
+                if (reactiveSuccess) {
+                    System.out.println("The customer account has been sucessfully reactivated again.");
+                } else {
+                    System.out.println("Failed to reactivate the customer account.");
+                }
+            }
+        } else {
+            System.out.println(customer == null ? "Customer not found." : "The customer account is currently not suspended.");
+        }
+    }
+
+    private void removeCustomer() {
         System.out.println("Removing a customer: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the customer ID to remove: ");
-            int id = scanner.nextInt();
+        int id = getIntInput("Enter the ID of the customer to remove: ", "Invalid input. Enter a numeric customer ID.");
 
-            Customer customer = libraryController.getCustomerController().findCustomer(id);
-            if (customer != null) {
-                System.out.println("Customer found" + customer);
-                System.out.println("Are you sure that you want to remove this customer? (yes/no): ");
-                String confirmation = scanner.nextLine();
+        Customer customer = libraryController.getCustomerController().findCustomer(id);
 
-                if (confirmation.equalsIgnoreCase("yes")) {
-                    boolean removeSuccess = libraryController.getCustomerController().removeCustomer(id);
-                    if (removeSuccess) {
-                        System.out.println("Customer removed successfully.");
-                    } else {
-                        System.out.println("Failed to remove customer.");
-                    }
+        if (customer != null) {
+            System.out.println("The customer has been found: " + customer);
+            String confirmation = getStringInput("Are you sure that you want to remove this customer? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'!");
+            if (confirmation.equalsIgnoreCase("yes")) {
+                boolean removeSuccess = libraryController.getCustomerController().removeCustomer(id);
+                if (removeSuccess) {
+                    System.out.println("The customer has been removed successfully.");
                 } else {
-                    System.out.println("Customer removal canceled.");
+                    System.out.println("Failed to remove the customer.");
                 }
-            } else {
-                System.out.println("Customer not found.");
             }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric customer ID.");
-            scanner.nextLine();
+        } else {
+            System.out.println("Customer not found.");
         }
+
         displayOptions();
     }
 }
