@@ -2,17 +2,19 @@ package library.view;
 
 import library.controller.LibraryController;
 import library.model.Employee;
+import library.util.InputUtil;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class EmployeeView {
     private LibraryController libraryController;
     private Scanner scanner;
+    private InputUtil inputUtil;
 
     public EmployeeView(LibraryController libraryController) {
         this.libraryController = libraryController;
         this.scanner = new Scanner(System.in);
+        this.inputUtil = new InputUtil(scanner);
     }
 
     public void displayOptions() {
@@ -61,245 +63,155 @@ public class EmployeeView {
         displayOptions();
     }
 
-    public void displayAllEmployees() {
+    private void displayAllEmployees() {
         libraryController.getEmployeeController().printAllEmployees();
         displayOptions();
     }
 
-    public void findEmployeeByID() {
+    private void findEmployeeByID() {
         System.out.println("Searching for a specific employee: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the Employee ID: ");
-            int id = scanner.nextInt();
+        int id = inputUtil.getIntInput("Enter the employee ID to search for: ", "Invalid input. Enter a numeric employee ID.");
 
-            Employee employee = libraryController.getEmployeeController().findEmployee(id);
-            if (employee != null) {
-                System.out.println("Employee found: " + employee);
-            } else {
-                System.out.println("Employee not found.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric employee ID.");
-            scanner.nextLine();
+        Employee employee = libraryController.getEmployeeController().findEmployee(id);
+
+        if (employee != null) {
+            System.out.println("Employee found: " + employee);
+        } else {
+            System.out.println("Employee not found.");
         }
+
         displayOptions();
     }
 
-    public void addNewEmployee() {
+    private void addNewEmployee() {
         System.out.println("Adding a new employee:");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter first name of the employee: ");
-            String firstName = scanner.nextLine();
-            if (firstName.matches(".*\\d.*")) {
-                throw new InputMismatchException("Numeral values are not allowed in names.");
-            }
+        String firstName = inputUtil.getStringInput("Enter the first name of the employee.", "The first name of the customer cannot be empty.");
+        String familyName = inputUtil.getStringInput("Enter the family name of the employee.", "The family name of the customer cannot be empty.");
+        double salary = inputUtil.getDoubleInput("Enter the salary of the employee: ", "The salary must not be negative.");
+        String status = inputUtil.getStringInput("Enter the status of the employee (INTERN, EMPLOYEE, MANAGER): ", "The status of the employee cannot be empty.").toUpperCase();
+        String password = inputUtil.getStringInput("Enter the password of the employee: ", "The password of the employee cannot be empty.");
 
-            System.out.println("Enter family name of the employee: ");
-            String familyName = scanner.nextLine();
-            if (familyName.matches(".*\\d.*")) {
-                throw new InputMismatchException("Numeral values are not allowed in names.");
-            }
+        Employee.EmployeeStatus employeeStatus = Employee.EmployeeStatus.valueOf(status);
+        Employee employee = libraryController.getEmployeeController().addNewEmployee(firstName, familyName, salary, employeeStatus, password);
 
-            System.out.println("Enter the salary of the employee: ");
-            double salary = scanner.nextDouble();
-
-            System.out.println("Enter the status of the employee (INTERN, EMPLOYEE, MANAGER): ");
-            String status = scanner.nextLine().toUpperCase();
-            Employee.EmployeeStatus employeeStatus = Employee.EmployeeStatus.valueOf(status);
-
-            System.out.println("Enter the password of the employee: ");
-            String password = scanner.nextLine();
-            if (password.matches(".*\\d.*")) {
-                throw new InputMismatchException("Numeral values are not allowed in names.");
-            }
-
-            Employee employee = libraryController.getEmployeeController().addNewEmployee(firstName, familyName, salary, employeeStatus, password);
-
-            if (employee != null) {
-                System.out.println("Customer has been created successfully.");
-                System.out.println(employee);
-            } else {
-                System.out.println("Failed to add the new customer.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Error: " + exception.getMessage());
+        if (employee != null) {
+            System.out.println("The new employee has been created successfully.");
+            System.out.println("New employee: " + employee);
+        } else {
+            System.out.println("Failed to add the new employee.");
         }
+
         displayOptions();
     }
 
-    public void updateEmployeeName() {
-        System.out.println("Updating the name of an employee: ");
+    private void updateEmployeeName() {
+        System.out.println("Updating the name of an existing employee: ");
         scanner.nextLine();
 
-        try {
-            System.out.println("Enter the employee ID to update the name: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
+        int id = inputUtil.getIntInput("Enter the ID of the employee to update: ", "Invalid input. Enter a numeric employee ID.");
 
-            Employee employee = libraryController.getEmployeeController().findEmployee(id);
-            if (employee != null) {
-                System.out.println("The following employee will be updated: " + employee);
+        Employee employee = libraryController.getEmployeeController().findEmployee(id);
 
-                String newFirstName;
-                while (true) {
-                    System.out.println("Enter the new first name: ");
-                    newFirstName = scanner.nextLine();
-                    if (newFirstName.matches(".*\\d.*")) {
-                        System.out.println("Numeral values are not allowed in names. Please try again: ");
-                    } else {
-                        break;
-                    }
-                }
+        if (employee != null) {
+            String newFirstName = inputUtil.getStringInput("Enter the new first name: ", "The new first name cannot be empty.");
+            String newFamilyName = inputUtil.getStringInput("Enter the new family name: ", "The new family name cannot be empty.");
 
-                String newFamilyName;
-                while (true) {
-                    System.out.println("Enter the new family name: ");
-                    newFamilyName = scanner.nextLine();
-                    if (newFamilyName.matches(".*\\d.*")) {
-                        System.out.println("Numeral values are not allowed in names. Please try again: ");
-                    } else {
-                        break;
-                    }
-                }
+            boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeName(id, newFirstName, newFamilyName);
+            if (updateSuccess) {
+                System.out.println("The employee has been updated successfully.");
+            } else {
+                System.out.println("Failed to update the employee.");
+            }
+        } else {
+            System.out.println("Employee not found.");
+        }
 
-                boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeName(id, newFirstName, newFamilyName);
-                if (updateSuccess) {
-                    System.out.println("The employee name has been updated successfully.");
+        displayOptions();
+    }
+
+    private void updateEmployeeSalary() {
+        System.out.println("Updating the salary of an existing employee: ");
+        scanner.nextLine();
+
+        int id = inputUtil.getIntInput("Enter the ID of the employee to update: ", "Invalid input. Enter a numeric employee ID.");
+
+        Employee employee = libraryController.getEmployeeController().findEmployee(id);
+
+        if (employee != null) {
+            double newSalary = inputUtil.getDoubleInput("Enter the new first salary: ", "The new salary must not be negative.");
+
+            boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeSalary(id, newSalary);
+            if (updateSuccess) {
+                System.out.println("The employee has been updated successfully.");
+            } else {
+                System.out.println("Failed to update the employee.");
+            }
+        } else {
+            System.out.println("Employee not found.");
+        }
+
+        displayOptions();
+    }
+
+    private void updateEmployeeStatus() {
+        System.out.println("Updating the status of an existing employee: ");
+        scanner.nextLine();
+
+        int id = inputUtil.getIntInput("Enter the ID of the employee to update: ", "Invalid input. Enter a numeric employee ID.");
+
+        Employee employee = libraryController.getEmployeeController().findEmployee(id);
+
+        if (employee != null) {
+            String newStatus = inputUtil.getStringInput("Enter the new status (INTERN, EMPLOYEE, MANAGER): : ", "The new status cannot be empty.").toUpperCase();
+            Employee.EmployeeStatus employeeStatus = Employee.EmployeeStatus.valueOf(newStatus);
+
+            boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeStatus(id, employeeStatus);
+            if (updateSuccess) {
+                System.out.println("The employee has been updated successfully.");
+            } else {
+                System.out.println("Failed to update the employee.");
+            }
+        } else {
+            System.out.println("Employee not found.");
+        }
+
+        displayOptions();
+    }
+
+    private void removeEmployee() {
+        System.out.println("Removing a employee: ");
+        scanner.nextLine();
+
+        int id = inputUtil.getIntInput("Enter the ID of the employee to remove: ", "Invalid input. Enter a numeric employee ID.");
+
+        Employee loggedInEmployee = libraryController.getEmployeeController().getLoggedInEmployee();
+
+        if (loggedInEmployee != null && loggedInEmployee.getEmployeeID() == id) {
+            System.out.println("You cannot remove yourself.");
+            displayOptions();
+        }
+
+        Employee employee = libraryController.getEmployeeController().findEmployee(id);
+
+        if (employee != null) {
+            System.out.println("The employee has been found: " + employee);
+            String confirmation = inputUtil.getStringInput("Are you sure that you want to remove this customer? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'!");
+            if (confirmation.equalsIgnoreCase("yes")) {
+                boolean removeSuccess = libraryController.getEmployeeController().removeEmployee(id);
+                if (removeSuccess) {
+                    System.out.println("The employee has been removed successfully.");
                 } else {
-                    System.out.println("Failed to update employee name.");
+                    System.out.println("Failed to remove the employee.");
                 }
-            } else {
-                System.out.println("Employee not found.");
             }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a valid ID.");
-            scanner.nextLine();
+        } else {
+            System.out.println("Employee not found.");
         }
-        displayOptions();
-    }
 
-    public void updateEmployeeSalary() {
-        System.out.println("Updating the salary of an employee: ");
-        scanner.nextLine();
-
-        try {
-            System.out.println("Enter the employee ID to update the salary: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
-
-            Employee employee = libraryController.getEmployeeController().findEmployee(id);
-            if (employee != null) {
-                System.out.println("The salary of the following employee will be updated: " + employee);
-
-                System.out.println("Enter the new salary: ");
-                while (true) {
-                    try {
-                        double newSalary = scanner.nextDouble();
-
-                        boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeSalary(id, newSalary);
-                        if (updateSuccess) {
-                            System.out.println("The salary of the employee has been updated successfully.");
-                        } else {
-                            System.out.println("Failed to update employee salary.");
-                        }
-                        break;
-                    } catch (InputMismatchException e) {
-                        System.out.println("Invalid input. Please enter a valid number: ");
-                        scanner.nextLine();
-                    }
-                }
-            } else {
-                System.out.println("Invalid input. Please enter a valid number: ");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Error: " + exception.getMessage());
-            scanner.nextLine();
-        }
-        displayOptions();
-    }
-
-    public void updateEmployeeStatus() {
-        System.out.println("Updating the status of an employee: ");
-        scanner.nextLine();
-
-        try {
-            System.out.println("Enter the employee ID to update the status: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
-
-            Employee employee = libraryController.getEmployeeController().findEmployee(id);
-            if (employee != null) {
-                System.out.println("The status of the following employee will be updated: " + employee);
-
-                System.out.println("Enter the new status (INTERN, NORMAL, MANAGER): ");
-                while (true) {
-                    try {
-                        String status = scanner.nextLine().toUpperCase();
-                        Employee.EmployeeStatus newStatus = Employee.EmployeeStatus.valueOf(status);
-
-                        boolean updateSuccess = libraryController.getEmployeeController().updateEmployeeStatus(id, newStatus);
-                        if (updateSuccess) {
-                            System.out.println("The status of the employee has been updated successfully.");
-                        } else {
-                            System.out.println("Failed to update employee status.");
-                        }
-                        break;
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Invalid status. Please enter a valid status (INTERN, NORMAL, MANAGER): ");
-                    }
-                }
-            } else {
-                System.out.println("Employee not found.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Error: Invalid input. Please enter a valid ID: ");
-            scanner.nextLine();
-        }
-        displayOptions();
-    }
-
-    public void removeEmployee() {
-        System.out.println("Removing an employee: ");
-        scanner.nextLine();
-
-        try {
-            System.out.println("Enter the employee ID to remove: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
-
-            Employee loggedInEmployee = libraryController.getEmployeeController().getLoggedInEmployee();
-            if (loggedInEmployee != null && loggedInEmployee.getEmployeeID() == id) {
-                System.out.println("You cannot remove yourself!");
-                return;
-            }
-
-            Employee employee = libraryController.getEmployeeController().findEmployee(id);
-            if (employee != null) {
-                System.out.println("Employee found: " + employee);
-                System.out.println("Are you sure that you want to remove this employee? (yes/no): ");
-                String confirmation = scanner.nextLine();
-
-                if (confirmation.equalsIgnoreCase("yes")) {
-                    boolean removeSuccess = libraryController.getEmployeeController().removeEmployee(id);
-                    if (removeSuccess) {
-                        System.out.println("Employee removed successfully.");
-                    } else {
-                        System.out.println("Failed to remove employee.");
-                    }
-                } else {
-                    System.out.println("Employee removal canceled.");
-                }
-            } else {
-                System.out.println("Employee not found.");
-            }
-        } catch (InputMismatchException exception) {
-            System.out.println("Invalid input. Please enter a numeric employee ID.");
-            scanner.nextLine();
-        }
         displayOptions();
     }
 }

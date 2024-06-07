@@ -5,19 +5,21 @@ import library.model.Copy;
 import library.model.Customer;
 import library.model.Employee;
 import library.model.Media;
+import library.util.InputUtil;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CopyView {
     private LibraryController libraryController;
     private Scanner scanner;
+    private InputUtil inputUtil;
 
     public CopyView(LibraryController libraryController) {
         this.libraryController = libraryController;
         this.scanner = new Scanner(System.in);
+        this.inputUtil = new InputUtil(scanner);
     }
 
     public void displayOptions() {
@@ -66,41 +68,6 @@ public class CopyView {
         }
     }
 
-    private String getStringInput(String prompt, String error) {
-        String input;
-        while (true) {
-            System.out.println(prompt);
-            input = scanner.nextLine();
-            if (input.trim().isEmpty()) {
-                System.out.println(error);
-            } else if (input.matches(".*\\d.*")) {
-                System.out.println("Numeral values are not allowed. " + error);
-            } else {
-                break;
-            }
-        }
-        return input;
-    }
-
-    private int getIntInput(String prompt, String error) {
-        int input;
-        while (true) {
-            try {
-                System.out.println(prompt);
-                input = scanner.nextInt();
-                if (input < 0) {
-                    throw new InputMismatchException(error);
-                }
-                scanner.nextLine();
-                break;
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
-        return input;
-    }
-
     private void printAllCopies() {
         libraryController.getCopyController().printAllCopies();
         displayOptions();
@@ -110,7 +77,7 @@ public class CopyView {
         System.out.println("Searching for specific copy by ID: ");
         scanner.nextLine();
 
-        int id = getIntInput("Enter the copy ID to search for: ", "Invalid input. Please enter a numeric copy ID.");
+        int id = inputUtil.getIntInput("Enter the copy ID to search for: ", "Invalid input. Please enter a numeric copy ID.");
 
         Copy copy = libraryController.getCopyController().findCopy(id);
         if (copy != null) {
@@ -126,7 +93,7 @@ public class CopyView {
         System.out.println("Adding new copy: \n");
         scanner.nextLine();
 
-        int mediaID = getIntInput("Enter the Media ID of the copy: ", "Media ID must not be negative.");
+        int mediaID = inputUtil.getIntInput("Enter the Media ID of the copy: ", "Media ID must not be negative.");
 
         Media media = libraryController.getMediaController().findMedia(mediaID);
         Copy copy = libraryController.getCopyController().addNewCopy(media);
@@ -144,12 +111,12 @@ public class CopyView {
     private void removeCopy() {
         System.out.println("Removing copy: ");
 
-        int id = getIntInput("Enter the copy ID to remove: ", "Invalid input. Please enter a numeric copy ID.");
+        int id = inputUtil.getIntInput("Enter the copy ID to remove: ", "Invalid input. Please enter a numeric copy ID.");
 
         Copy copy = libraryController.getCopyController().findCopy(id);
         if (copy != null) {
             System.out.println("Copy found: " + copy);
-            String confirmation = getStringInput("Are you sure that you want to remove this copy? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'.");
+            String confirmation = inputUtil.getStringInput("Are you sure that you want to remove this copy? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'.");
 
             if (confirmation.equalsIgnoreCase("yes")) {
                 boolean removeSuccess = libraryController.getCopyController().removeCopy(id);
@@ -172,8 +139,8 @@ public class CopyView {
         System.out.println("Registering copy as borrowed: ");
         scanner.nextLine();
 
-        int copyID = getIntInput("Enter the ID of the copy to be borrowed: ", "Invalid input. Please enter a numeric copy ID.");
-        int customerID = getIntInput("Enter the ID of the customer: ", "Invalid input. Please enter a numeric customer ID.");
+        int copyID = inputUtil.getIntInput("Enter the ID of the copy to be borrowed: ", "Invalid input. Please enter a numeric copy ID.");
+        int customerID = inputUtil.getIntInput("Enter the ID of the customer: ", "Invalid input. Please enter a numeric customer ID.");
 
         Copy copy = libraryController.getCopyController().findCopy(copyID);
         Customer customer = libraryController.getCustomerController().findCustomer(customerID);
@@ -206,7 +173,7 @@ public class CopyView {
         System.out.println("Registering copy as returned: ");
         scanner.nextLine();
 
-        int copyID = getIntInput("Enter the ID of the copy to be returned: ", "Invalid input. Please enter a numeric copy ID.");
+        int copyID = inputUtil.getIntInput("Enter the ID of the copy to be returned: ", "Invalid input. Please enter a numeric copy ID.");
 
         Copy copy = libraryController.getCopyController().findCopy(copyID);
 
@@ -241,7 +208,7 @@ public class CopyView {
         System.out.println("Extending the return of a copy by 28 days: ");
         scanner.nextLine();
 
-        int copyID = getIntInput("Enter the ID of the copy to be returned later: ", "Invalid input. Please enter a numeric copy ID.");
+        int copyID = inputUtil.getIntInput("Enter the ID of the copy to be returned later: ", "Invalid input. Please enter a numeric copy ID.");
 
         Copy copy = libraryController.getCopyController().findCopy(copyID);
 

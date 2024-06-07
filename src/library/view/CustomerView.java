@@ -2,17 +2,19 @@ package library.view;
 
 import library.controller.LibraryController;
 import library.model.Customer;
+import library.util.InputUtil;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CustomerView {
     private LibraryController libraryController;
     private Scanner scanner;
+    private InputUtil inputUtil;
 
     public CustomerView(LibraryController libraryController) {
         this.libraryController = libraryController;
         this.scanner = new Scanner(System.in);
+        this.inputUtil = new InputUtil(scanner);
     }
 
     public void displayOptions() {
@@ -57,41 +59,6 @@ public class CustomerView {
         displayOptions();
     }
 
-    private String getStringInput(String prompt, String error) {
-        String input;
-        while (true) {
-            System.out.println(prompt);
-            input = scanner.nextLine();
-            if (input.trim().isEmpty()) {
-                System.out.println(error);
-            } else if (input.matches(".*\\d.*")) {
-                System.out.println("Numeral values are not allowed. " + error);
-            } else {
-                break;
-            }
-        }
-        return input;
-    }
-
-    private int getIntInput(String prompt, String error) {
-        int input;
-        while (true) {
-            try {
-                System.out.println(prompt);
-                input = scanner.nextInt();
-                if (input < 0) {
-                    throw new InputMismatchException(error);
-                }
-                scanner.nextLine();
-                break;
-            } catch (InputMismatchException exception) {
-                System.out.println(exception.getMessage());
-                scanner.nextLine();
-            }
-        }
-        return input;
-    }
-
     private void displayAllCustomers() {
         libraryController.getCustomerController().printAllCustomers();
         displayOptions();
@@ -101,9 +68,10 @@ public class CustomerView {
         System.out.println("Searching for a specific customer by ID: ");
         scanner.nextLine();
 
-        int id = getIntInput("Enter the customer ID to search for: ", "Invalid input. Enter a numeric customer ID.");
+        int id = inputUtil.getIntInput("Enter the customer ID to search for: ", "Invalid input. Enter a numeric customer ID.");
 
         Customer customer = libraryController.getCustomerController().findCustomer(id);
+
         if (customer != null) {
             System.out.println("Customer found: " + customer);
         } else {
@@ -117,8 +85,8 @@ public class CustomerView {
         System.out.println("Adding a new customer:");
         scanner.nextLine();
 
-        String firstName = getStringInput("Enter the first name of the customer: ", "The first name of the customer cannot be empty.");
-        String familyName = getStringInput("Enter the family name of the customer: ", "The family name of the customer cannot be empty.");
+        String firstName = inputUtil.getStringInput("Enter the first name of the customer: ", "The first name of the customer cannot be empty.");
+        String familyName = inputUtil.getStringInput("Enter the family name of the customer: ", "The family name of the customer cannot be empty.");
 
         Customer customer = libraryController.getCustomerController().addNewCustomer(firstName, familyName);
 
@@ -136,16 +104,16 @@ public class CustomerView {
         System.out.println("Updating an existing customer: ");
         scanner.nextLine();
 
-        int id = getIntInput("Enter the ID of the customer to update: ", "Invalid input. Enter a numeric customer ID.");
+        int id = inputUtil.getIntInput("Enter the ID of the customer to update: ", "Invalid input. Enter a numeric customer ID.");
 
         Customer customer = libraryController.getCustomerController().findCustomer(id);
 
         if (customer != null) {
-            String newFirstName = getStringInput("Enter the new first name: ", "The new first name cannot be empty.");
-            String newFamilyName = getStringInput("Enter the new family name: ", "The new family name cannot be empty.");
+            String newFirstName = inputUtil.getStringInput("Enter the new first name: ", "The new first name cannot be empty.");
+            String newFamilyName = inputUtil.getStringInput("Enter the new family name: ", "The new family name cannot be empty.");
 
-            boolean updateSucess = libraryController.getCustomerController().updateCustomer(id, newFirstName, newFamilyName);
-            if (updateSucess) {
+            boolean updateSuccess = libraryController.getCustomerController().updateCustomer(id, newFirstName, newFamilyName);
+            if (updateSuccess) {
                 System.out.println("The customer has been updated successfully.");
             } else {
                 System.out.println("Failed to update the customer.");
@@ -161,12 +129,12 @@ public class CustomerView {
         System.out.println("Reactivating a suspended account: ");
         scanner.nextLine();
 
-        int id = getIntInput("Enter the ID of the suspended customer: ", "Invalid input. Enter a numeric customer ID");
+        int id = inputUtil.getIntInput("Enter the ID of the suspended customer: ", "Invalid input. Enter a numeric customer ID");
 
         Customer customer = libraryController.getCustomerController().findCustomer(id);
 
         if (customer != null && customer.getMembershipStatus() == Customer.MembershipStatus.SUSPENDED) {
-            String confirmation = getStringInput("Please confirm that the outstanding has been paid to reactivate the customer account (yes/no):", "Invalid input. Please enter 'yes' or 'no'!");
+            String confirmation = inputUtil.getStringInput("Please confirm that the outstanding has been paid to reactivate the customer account (yes/no):", "Invalid input. Please enter 'yes' or 'no'!");
             if (confirmation.equalsIgnoreCase("yes")) {
                 boolean reactiveSuccess = libraryController.getCustomerController().updateCustomerStatus(id, Customer.MembershipStatus.ACTIVE);
                 if (reactiveSuccess) {
@@ -184,13 +152,13 @@ public class CustomerView {
         System.out.println("Removing a customer: ");
         scanner.nextLine();
 
-        int id = getIntInput("Enter the ID of the customer to remove: ", "Invalid input. Enter a numeric customer ID.");
+        int id = inputUtil.getIntInput("Enter the ID of the customer to remove: ", "Invalid input. Enter a numeric customer ID.");
 
         Customer customer = libraryController.getCustomerController().findCustomer(id);
 
         if (customer != null) {
             System.out.println("The customer has been found: " + customer);
-            String confirmation = getStringInput("Are you sure that you want to remove this customer? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'!");
+            String confirmation = inputUtil.getStringInput("Are you sure that you want to remove this customer? (yes/no): ", "Invalid input. Please enter 'yes' or 'no'!");
             if (confirmation.equalsIgnoreCase("yes")) {
                 boolean removeSuccess = libraryController.getCustomerController().removeCustomer(id);
                 if (removeSuccess) {
