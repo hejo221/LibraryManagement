@@ -10,6 +10,12 @@ public class Game extends Media {
         this.gamePlatform = gamePlatform;
     }
 
+    public Game(int mediaID, String title, int releaseYear, String developer, GamePlatform gamePlatform) {
+        super(mediaID, title, releaseYear);
+        this.developer = developer;
+        this.gamePlatform = gamePlatform;
+    }
+
     public String getDeveloper() {
         return developer;
     }
@@ -24,6 +30,32 @@ public class Game extends Media {
 
     public void setGamePlatform(GamePlatform gamePlatform) {
         this.gamePlatform = gamePlatform;
+    }
+
+    @Override
+    public String getMediaType() {
+        return "Game";
+    }
+
+    public static Game readFromFile(String mediaString) {
+        String[] parts = mediaString.split(",");
+        if (parts.length != 6) {
+            throw new IllegalArgumentException("Invalid data format.");
+        }
+
+        int mediaID = Integer.parseInt(parts[1]);
+        String title = parts[2];
+        int releaseYear = Integer.parseInt(parts[3]);
+        String developer = parts[4];
+        String platform = parts[5];
+
+        GamePlatform gamePlatform = GamePlatform.valueOf(platform);
+
+        return new Game(mediaID, title, releaseYear, developer, gamePlatform);
+    }
+
+    public String writeToFile() {
+        return getMediaType() + "," + getMediaID() + "," + getTitle() + "," + getReleaseYear() + "," + getDeveloper() + "," + getGamePlatform();
     }
 
     @Override
