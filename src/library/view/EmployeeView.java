@@ -3,7 +3,9 @@ package library.view;
 import library.controller.LibraryController;
 import library.model.Employee;
 import library.util.InputUtil;
+import library.util.SortUtil;
 
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class EmployeeView {
@@ -19,14 +21,16 @@ public class EmployeeView {
 
     public void displayOptions() {
         System.out.println("\nYour options are:");
-        System.out.println("1: Print all Employees");
-        System.out.println("2: Find specific Employee");
-        System.out.println("3: Add new Employee");
-        System.out.println("4: Update Employee Name");
-        System.out.println("5: Update Employee Salary");
-        System.out.println("6: Update Employee Role");
-        System.out.println("7: Remove Employee");
-        System.out.println("8: Go back to the main menu");
+        System.out.println("1: Print all employees (unsorted)");
+        System.out.println("2: Print all employees (sorted alphabetically by family name)");
+        System.out.println("3: Print all employees (sorted numerically by ID)");
+        System.out.println("4: Find specific employee");
+        System.out.println("5: Add new employee");
+        System.out.println("6: Update employee name");
+        System.out.println("7: Update employee salary");
+        System.out.println("8: Update employee role");
+        System.out.println("9: Remove employee");
+        System.out.println("10: Go back to the main menu");
 
         System.out.println("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -36,24 +40,30 @@ public class EmployeeView {
                 displayAllEmployees();
                 break;
             case 2:
-                findEmployeeByID();
+                displayAllEmployeesSortedAlphabetically();
                 break;
             case 3:
-                addNewEmployee();
+                displayAllEmployeesSortedNumerically();
                 break;
             case 4:
-                updateEmployeeName();
+                findEmployeeByID();
                 break;
             case 5:
-                updateEmployeeSalary();
+                addNewEmployee();
                 break;
             case 6:
-                updateEmployeeStatus();
+                updateEmployeeName();
                 break;
             case 7:
-                removeEmployee();
+                updateEmployeeSalary();
                 break;
             case 8:
+                updateEmployeeStatus();
+                break;
+            case 9:
+                removeEmployee();
+                break;
+            case 10:
                 MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
@@ -64,8 +74,18 @@ public class EmployeeView {
     }
 
     private void displayAllEmployees() {
-        libraryController.getEmployeeController().printAllEmployees();
+        libraryController.getEmployeeController().printAllEmployees(libraryController.getEmployeeController().getEmployeeDB());
         displayOptions();
+    }
+
+    private void displayAllEmployeesSortedAlphabetically() {
+        LinkedHashMap<Integer, Employee> sortedEmployees = SortUtil.sortByComparator(libraryController.getEmployeeController().getEmployeeDB(), new SortUtil.EmployeeNameComparator());
+        libraryController.getEmployeeController().printAllEmployees(sortedEmployees);
+    }
+
+    private void displayAllEmployeesSortedNumerically() {
+        LinkedHashMap<Integer, Employee> sortedEmployees = SortUtil.sortByComparator(libraryController.getEmployeeController().getEmployeeDB(), new SortUtil.EmployeeIDComparator());
+        libraryController.getEmployeeController().printAllEmployees(sortedEmployees);
     }
 
     private void findEmployeeByID() {
