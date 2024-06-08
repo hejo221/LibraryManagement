@@ -31,6 +31,17 @@ public class Copy {
         this.borrowedBy = null;
     }
 
+    public Copy(int copyID, Media media, boolean isBorrowed, boolean isOverdue, LocalDate borrowDate, LocalDate returnDate, Customer borrower, Employee borrowedBy) {
+        this.copyID = copyID;
+        this.media = media;
+        this.isBorrowed = isBorrowed;
+        this.isOverdue = isOverdue;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
+        this.borrower = borrower;
+        this.borrowedBy = borrowedBy;
+    }
+
     private int generateCopyID() {
         int randomID;
 
@@ -60,10 +71,6 @@ public class Copy {
 
     public boolean isOverdue() {
         return isOverdue;
-    }
-
-    public void setOverdue(boolean overdue) {
-        isOverdue = overdue;
     }
 
     public LocalDate getBorrowDate() {
@@ -98,10 +105,48 @@ public class Copy {
         this.borrowedBy = borrowedBy;
     }
 
+    public static Copy readFromFile(String data) {
+        String[] parts = data.split(",");
+        if (parts.length < 13) {
+            throw new IllegalArgumentException("Invalid data format.");
+        }
+
+        int copyID = Integer.parseInt(parts[0]);
+
+        String mediaData = parts[1] + "," + parts[2] + "," + parts[3] + "," + parts[4] + "," + parts[5] + "," + parts[6];
+        Media media = Media.readFromFile(mediaData);
+
+        boolean isBorrowed = Boolean.parseBoolean(parts[7]);
+        boolean isOverdue = Boolean.parseBoolean(parts[8]);
+
+        LocalDate borrowDate = null;
+        LocalDate returnDate = null;
+        Customer borrower = null;
+        Employee borrowedBy = null;
+
+        if (parts.length > 13) {
+            borrowDate = LocalDate.parse(parts[9]);
+            returnDate = LocalDate.parse(parts[10]);
+
+            String customerString = parts[11] + "," + parts[12] + "," + parts[13] + "," + parts[14];
+            borrower = Customer.readFromFile(customerString);
+
+            String employeeString = parts[15] + "," + parts[16] + "," + parts[17] + "," + parts[18] + "," + parts[19] + "," + parts[20];
+            borrowedBy = Employee.readFromFile(employeeString);
+        }
+
+        return new Copy(copyID, media, isBorrowed, isOverdue, borrowDate, returnDate, borrower, borrowedBy);
+    }
+
+    public String writeToFile() {
+        return getCopyID() + "," + getMedia().writeToFile() + "," + (isBorrowed() ? isBorrowed() + "," + isOverdue() + "," + getBorrowDate() + "," + getReturnDate() + "," +
+                getBorrower().writeToFile() + "," + getBorrowedBy().writeToFile() : isBorrowed() + ",false,null,null,null,null");
+    }
+
     @Override
     public String toString() {
         return "Copy - Copy ID: " + getCopyID() + ", Media: " + getMedia().getMediaID() + ", " + getMedia().getTitle()
-                + ", Borrowed?: " + getBorrowDate() + (isBorrowed() ? ", Borrow Date: " + getBorrowDate() + ", Return Date: "
+                + ", Borrowed?: " + isBorrowed() + (isBorrowed() ? ", Borrow Date: " + getBorrowDate() + ", Return Date: "
                 + getReturnDate() + ", Borrower (ID): " + getBorrower().getCustomerID() + ", Overdue?: " + isOverdue() : "");
     }
 }
