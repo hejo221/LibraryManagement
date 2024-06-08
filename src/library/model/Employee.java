@@ -90,6 +90,28 @@ public class Employee {
         this.password = password;
     }
 
+    public static Employee readFromFile(String employeeString) {
+        String[] parts = employeeString.split(",");
+        if (parts.length != 6) {
+            throw new IllegalArgumentException("Invalid data format.");
+        }
+
+        int employeeID = Integer.parseInt(parts[0]);
+        String firstName = parts[1];
+        String familyName = parts[2];
+        double salary = Double.parseDouble(parts[3]);
+        String status = parts[4];
+        String password = parts[5];
+
+        EmployeeStatus employeeStatus = EmployeeStatus.valueOf(status);
+
+        return new Employee(employeeID, firstName, familyName, salary, employeeStatus, password);
+    }
+
+    public String writeToFile() {
+        return getEmployeeID() + "," + getFirstName() + "," + getFamilyName() + "," + getSalary() + "," + getEmployeeStatus() + "," + getPassword();
+    }
+
     @Override
     public String toString() {
         return "Employee - Employee ID: " + getEmployeeID() + ", First Name: " + getFirstName() + ", Family Name: " + getFamilyName()
