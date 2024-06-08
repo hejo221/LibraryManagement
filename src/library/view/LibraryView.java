@@ -1,6 +1,7 @@
 package library.view;
 
 import library.controller.LibraryController;
+import src.library.view.CustomerView;
 
 public class LibraryView {
     private MainView mainView;
