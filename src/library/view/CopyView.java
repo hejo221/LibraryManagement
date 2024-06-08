@@ -6,9 +6,11 @@ import library.model.Customer;
 import library.model.Employee;
 import library.model.Media;
 import library.util.InputUtil;
+import library.util.SortUtil;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class CopyView {
@@ -26,14 +28,15 @@ public class CopyView {
         scanner.nextLine();
 
         System.out.println("\nYour options are: ");
-        System.out.println("1: Print all copies");
-        System.out.println("2: Search for specific copy");
-        System.out.println("3: Add new copy");
-        System.out.println("4: Remove copy");
-        System.out.println("5: Register copy as borrowed");
-        System.out.println("6: Register copy as returned");
-        System.out.println("7: Extend copy return date");
-        System.out.println("8: Return to main menu");
+        System.out.println("1: Print all copies (unsorted)");
+        System.out.println("2: Print all copies (sorted by ID)");
+        System.out.println("3: Search for specific copy");
+        System.out.println("4: Add new copy");
+        System.out.println("5: Remove copy");
+        System.out.println("6: Register copy as borrowed");
+        System.out.println("7: Register copy as returned");
+        System.out.println("8: Extend copy return date");
+        System.out.println("9: Return to main menu");
 
         System.out.println("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -43,24 +46,27 @@ public class CopyView {
                 printAllCopies();
                 break;
             case 2:
-                findCopyByID();
+                printAllCopiesSortedNumerically();
                 break;
             case 3:
-                addNewCopy();
+                findCopyByID();
                 break;
             case 4:
-                removeCopy();
+                addNewCopy();
                 break;
             case 5:
-                registerCopyAsBorrowed();
+                removeCopy();
                 break;
             case 6:
-                registerCopyAsReturned();
+                registerCopyAsBorrowed();
                 break;
             case 7:
-                extendedReturnDate();
+                registerCopyAsReturned();
                 break;
             case 8:
+                extendedReturnDate();
+                break;
+            case 9:
                 MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
             default:
@@ -69,8 +75,13 @@ public class CopyView {
     }
 
     private void printAllCopies() {
-        libraryController.getCopyController().printAllCopies();
+        libraryController.getCopyController().printAllCopies(libraryController.getCopyController().getCopyDB());
         displayOptions();
+    }
+
+    private void printAllCopiesSortedNumerically() {
+        LinkedHashMap<Integer, Copy> sortedCopies = SortUtil.sortByComparator(libraryController.getCopyController().getCopyDB(), new SortUtil.CopyIDComparator());
+        libraryController.getCopyController().printAllCopies(sortedCopies);
     }
 
     private void findCopyByID() {
