@@ -1,27 +1,30 @@
 package library.view;
 
-import library.Main;
 import library.controller.LibraryController;
+import library.exceptions.FileWriteException;
 import library.model.Employee;
+import library.util.InputUtil;
+import library.util.WriteUtil;
+import src.library.view.CustomerView;
 
 import java.util.Scanner;
 
 public class MainView {
     private LibraryController libraryController;
-    private Scanner scanner;
+    private final Scanner scanner;
+    private InputUtil inputUtil;
 
     public MainView(LibraryController libraryController) {
         this.libraryController = libraryController;
         this.scanner = new Scanner(System.in);
+        this.inputUtil = new InputUtil(scanner);
     }
 
     public void displayLogin() {
         System.out.println("Please to login to access the Library Management\n");
-        System.out.println("Enter your Employee ID: ");
-        int employeeID = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Enter your password: ");
-        String password = scanner.nextLine();
+
+        int employeeID = inputUtil.getIntInput("Enter your employee ID: ", "Invalid input. Enter a numeric employee ID.");
+        String password = inputUtil.getStringInput("Enter your password: ", "The password cannot be empty.", true);
 
         boolean loggedIn = libraryController.getEmployeeController().login(employeeID, password);
         if (loggedIn) {
@@ -75,6 +78,14 @@ public class MainView {
                 displayLogin();
                 break;
             case 6:
+                try {
+                    WriteUtil.writeEmployeesToFile(libraryController.getEmployeeController().getEmployeeDB());
+                    WriteUtil.writeCustomersToFile(libraryController.getCustomerController().getCustomerDB());
+                    WriteUtil.writeCopiesToFile(libraryController.getCopyController().getCopyDB());
+                    WriteUtil.writeMediaToFile(libraryController.getMediaController().getMediaDB());
+                } catch (FileWriteException exception) {
+                    System.out.println("Error writing to file: " + exception.getMessage());
+                }
                 scanner.close();
                 System.exit(0);
             default:
