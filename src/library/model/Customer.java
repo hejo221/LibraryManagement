@@ -22,6 +22,13 @@ public class Customer {
         this.membershipStatus = MembershipStatus.ACTIVE;
     }
 
+    public Customer (int customerID, String firstName, String familyName, MembershipStatus membershipStatus) {
+        this.customerID = customerID;
+        this.firstName = firstName;
+        this.familyName = familyName;
+        this.membershipStatus = membershipStatus;
+    }
+
     private int generateCustomerID() {
         int randomID;
 
@@ -59,6 +66,26 @@ public class Customer {
 
     public void setMembershipStatus(MembershipStatus membershipStatus) {
         this.membershipStatus = membershipStatus;
+    }
+
+    public static Customer readFromFile(String customerString) {
+        String[] parts = customerString.split(",");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Invalid data format.");
+        }
+
+        int customerID = Integer.parseInt(parts[0]);
+        String firstName = parts[1];
+        String familyName = parts[2];
+        String status = parts[3];
+
+        MembershipStatus membershipStatus = MembershipStatus.valueOf(status);
+
+        return new Customer(customerID, firstName, familyName, membershipStatus);
+    }
+
+    public String writeToFile() {
+        return getCustomerID() + "," + getFirstName() + "," + getFamilyName() + "," + getMembershipStatus();
     }
 
     @Override
