@@ -3,7 +3,9 @@ package library.view;
 import library.controller.LibraryController;
 import library.model.*;
 import library.util.InputUtil;
+import library.util.SortUtil;
 
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class MediaView {
@@ -21,15 +23,17 @@ public class MediaView {
         scanner.nextLine();
 
         System.out.println("\nYour Options are: ");
-        System.out.println("1: Print all Media");
-        System.out.println("2: Find specific Media");
-        System.out.println("3: Manage Books");
-        System.out.println("4: Manage Magazines");
-        System.out.println("5: Manage Games");
-        System.out.println("6: Manage Movies");
-        System.out.println("7: Manage Series");
-        System.out.println("8: Remove Media");
-        System.out.println("9: Go back to main menu");
+        System.out.println("1: Print all media (unsorted)");
+        System.out.println("2: Print all media (sorted by title)");
+        System.out.println("3: Print all media (sorted by release year)");
+        System.out.println("4: Find specific media");
+        System.out.println("5: Manage books");
+        System.out.println("6: Manage magazines");
+        System.out.println("7: Manage games");
+        System.out.println("8: Manage movies");
+        System.out.println("9: Manage series");
+        System.out.println("10: Remove media");
+        System.out.println("11: Go back to main menu");
 
         System.out.println("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -39,27 +43,33 @@ public class MediaView {
                 printAllMedia();
                 break;
             case 2:
-                findMediaByID();
+                printAllMediaSortedAlphabetically();
                 break;
             case 3:
-                displayBookOptions();
+                printAllMediaSortedNumerically();
                 break;
             case 4:
-                displayMagazineOptions();
+                findMediaByID();
                 break;
             case 5:
-                displayGameOptions();
+                displayBookOptions();
                 break;
             case 6:
-                displayMovieOptions();
+                displayMagazineOptions();
                 break;
             case 7:
-                displaySeriesOptions();
+                displayGameOptions();
                 break;
             case 8:
-                removeMedia();
+                displayMovieOptions();
                 break;
             case 9:
+                displaySeriesOptions();
+                break;
+            case 10:
+                removeMedia();
+                break;
+            case 11:
                 MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
@@ -255,8 +265,18 @@ public class MediaView {
     }
 
     private void printAllMedia() {
-        libraryController.getMediaController().printAllMedia();
+        libraryController.getMediaController().printAllMedia(libraryController.getMediaController().getMediaDB());
         displayGeneralOptions();
+    }
+
+    private void printAllMediaSortedAlphabetically() {
+        LinkedHashMap<Integer, Media> sortedMedia = SortUtil.sortByComparator(libraryController.getMediaController().getMediaDB(), new SortUtil.MediaTitleComparator());
+        libraryController.getMediaController().printAllMedia(sortedMedia);
+    }
+
+    private void printAllMediaSortedNumerically() {
+        LinkedHashMap<Integer, Media> sortedMedia = SortUtil.sortByComparator(libraryController.getMediaController().getMediaDB(), new SortUtil.MediaReleaseYearComparator());
+        libraryController.getMediaController().printAllMedia(sortedMedia);
     }
 
     private void findMediaByID() {
