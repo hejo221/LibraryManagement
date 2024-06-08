@@ -1,5 +1,6 @@
 package library.controller;
 
+import library.exceptions.FileReadException;
 import library.model.Media;
 import library.model.Book;
 import library.model.Magazine;
@@ -7,6 +8,7 @@ import library.model.Game;
 import library.model.Game.GamePlatform;
 import library.model.Movie;
 import library.model.Series;
+import library.util.ReadUtil;
 
 import java.util.HashMap;
 
@@ -15,9 +17,18 @@ public class MediaController {
 
     public MediaController() {
         this.mediaDB = new HashMap<>();
+        readMedia();
     }
 
-    public void printAllMedia() {
+    private void readMedia() {
+        try {
+            mediaDB = ReadUtil.readMediaFromFile();
+        } catch (FileReadException exception) {
+            System.out.println("Error reading media from file: " + exception.getMessage());
+        }
+    }
+
+    public void printAllMedia(HashMap<Integer, Media> mediaDB) {
         if (mediaDB.isEmpty()) {
             System.out.println("No media found.");
         } else {
@@ -166,5 +177,8 @@ public class MediaController {
             return true;
         }
         return false;
+    }
+    public HashMap<Integer, Media> getMediaDB() {
+        return mediaDB;
     }
 }
