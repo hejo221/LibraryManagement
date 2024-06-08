@@ -1,8 +1,12 @@
 package library.controller;
 
+import library.exceptions.FileReadException;
+import library.exceptions.FileWriteException;
 import library.model.Customer;
 import library.model.Employee;
 import library.model.Employee.EmployeeStatus;
+import library.util.ReadUtil;
+import library.util.WriteUtil;
 
 import java.util.HashMap;
 
@@ -13,9 +17,18 @@ public class EmployeeController {
     public EmployeeController() {
         this.employeeDB = new HashMap<>();
         this.loggedInEmployeeID = null;
+        readEmployees();
     }
 
-    public void printAllEmployees() {
+    private void readEmployees() {
+        try {
+            employeeDB = ReadUtil.readEmployeesFromFile();
+        } catch (FileReadException exception) {
+            System.out.println("Error reading employees from file: " + exception.getMessage());
+        }
+    }
+
+    public void printAllEmployees(HashMap<Integer, Employee> employeeDB) {
         if (employeeDB.isEmpty()) {
             System.out.println("No employees found.");
         } else {
