@@ -3,7 +3,9 @@ package library.view;
 import library.controller.LibraryController;
 import library.model.Customer;
 import library.util.InputUtil;
+import library.util.SortUtil;
 
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class CustomerView {
@@ -19,13 +21,15 @@ public class CustomerView {
 
     public void displayOptions() {
         System.out.println("Your options are: ");
-        System.out.println("1: Print all customer accounts");
-        System.out.println("2: Find specific customer");
-        System.out.println("3: Add new customer");
-        System.out.println("4: Update customer");
-        System.out.println("5: Reactivate suspended customer account");
-        System.out.println("6: Remove customer");
-        System.out.println("7: Go back to the main menu");
+        System.out.println("1: Print all customer accounts (unsorted)");
+        System.out.println("2: Print all customer accounts (sorted alphabetically by family name)");
+        System.out.println("3: Print all customer accounts (sorted numerically by ID)");
+        System.out.println("4: Find specific customer");
+        System.out.println("5: Add new customer");
+        System.out.println("6: Update customer");
+        System.out.println("7: Reactivate suspended customer account");
+        System.out.println("8: Remove customer");
+        System.out.println("9: Go back to the main menu");
 
         System.out.println("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -35,21 +39,27 @@ public class CustomerView {
                 displayAllCustomers();
                 break;
             case 2:
-                findCustomerByID();
+                displayAllCustomerSortedAlphabetically();
                 break;
             case 3:
-                addNewCustomer();
+                displayAllCustomersSortedNumerically();
                 break;
             case 4:
-                updateCustomer();
+                findCustomerByID();
                 break;
             case 5:
-                reactivateAccount();
+                addNewCustomer();
                 break;
             case 6:
-                removeCustomer();
+                updateCustomer();
                 break;
             case 7:
+                reactivateAccount();
+                break;
+            case 8:
+                removeCustomer();
+                break;
+            case 9:
                 MainView mainView = new LibraryView(libraryController).getMainView();
                 mainView.displayOptions();
                 break;
@@ -60,8 +70,18 @@ public class CustomerView {
     }
 
     private void displayAllCustomers() {
-        libraryController.getCustomerController().printAllCustomers();
+        libraryController.getCustomerController().printAllCustomers(libraryController.getCustomerController().getCustomerDB());
         displayOptions();
+    }
+
+    private void displayAllCustomerSortedAlphabetically() {
+        LinkedHashMap<Integer, Customer> sortedCustomers = SortUtil.sortByComparator(libraryController.getCustomerController().getCustomerDB(), new SortUtil.CustomerNameComparator());
+        libraryController.getCustomerController().printAllCustomers(sortedCustomers);
+    }
+
+    private void displayAllCustomersSortedNumerically() {
+        LinkedHashMap<Integer, Customer> sortedCustomers = SortUtil.sortByComparator(libraryController.getCustomerController().getCustomerDB(), new SortUtil.CustomerIDComparator());
+        libraryController.getCustomerController().printAllCustomers(sortedCustomers);
     }
 
     private void findCustomerByID() {
