@@ -20,6 +20,12 @@ public abstract class Media {
         this.releaseYear = releaseYear;
     }
 
+    public Media(int mediaID, String title, int releaseYear) {
+        this.mediaID = mediaID;
+        this.title = title;
+        this.releaseYear = releaseYear;
+    }
+
     private int generateMediaID() {
         int randomID;
 
@@ -50,4 +56,30 @@ public abstract class Media {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
+
+    public abstract String getMediaType();
+    public abstract String writeToFile();
+
+    public static Media readFromFile(String mediaString) {
+        String[] parts = mediaString.split(",");
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Invalid data format.");
+        }
+
+        String mediaType = parts[0];
+        switch (mediaType) {
+            case "Book":
+                return Book.readFromFile(mediaString);
+            case "Magazine":
+                return Magazine.readFromFile(mediaString);
+            case "Game":
+                return Game.readFromFile(mediaString);
+            case "Movie":
+                return Movie.readFromFile(mediaString);
+            case "Series":
+                return Series.readFromFile(mediaString);
+            default:
+                throw new IllegalArgumentException("Unknown media type: " + mediaType);
+        }
+     }
 }
